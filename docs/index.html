@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPEN</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="OPEN: оптимизация Windows для игр. Обратимые твики реестра, пресеты под игры, настройки внутри игр, оверлей FPS, замер до и после и обход замедления Discord и YouTube.">
+<meta name="theme-color" content="#0c0c0d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OPEN: Windows, настроенная под игры">
+<meta property="og:description" content="Обратимые твики, пресеты под игры, настройки внутри игр, оверлей FPS и замер до и после. Windows 10 / 11.">
+<meta property="og:url" content="https://pirogovv-collab.github.io/OPEN/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e8e8ea'/%3E%3Cstop offset='1' stop-color='%23ababb0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='3' y='3' width='26' height='26' rx='7' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: монохромная тёмная страница в палитре приложения. Первый экран, затем живое окно OPEN
+   во всю ширину, затем справочные разделы: вкладки, пресеты, таблица твиков, игры, установка, версии. */
+:root {
+  --bg: #0c0c0d;
+  --bg-top: #141416;
+  --surface: #161618;
+  --surface-alt: #202023;
+  --border: #2e2e31;
+  --text: #f2f2f3;
+  --muted: #9a9a9e;
+  --dim: #5f5f64;
+  --accent: #e8e8ea;
+  --on-accent: #0c0c0d;
+
+  --font-display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Onest", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, ui-monospace, monospace;
+
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.5rem;
+  --step-3: clamp(1.9rem, 4.2vw, 3rem);
+  --step-4: clamp(2.4rem, 7vw, 5.2rem);
+
+  --radius: 12px;
+  --wrap: 1180px;
+  color-scheme: dark;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Двуязычный текст: каждая фраза есть на обоих языках, лишний скрыт. */
+html[lang="ru"] [data-l="en"], html[lang="en"] [data-l="ru"] { display: none !important; }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image: radial-gradient(1200px 500px at 15% -10%, var(--bg-top), transparent 70%);
+  color: var(--text);
+  font: 400 var(--step-0)/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: inherit; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- шапка ---------- */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.top .wrap { display: flex; align-items: center; gap: 26px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.05rem/1 var(--font-display); letter-spacing: 0.02em; }
+.logo { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, var(--accent), #ababb0); flex: none; }
+.top nav { display: flex; gap: 20px; margin-right: auto; }
+.top nav a { text-decoration: none; color: var(--muted); font-size: 0.9375rem; }
+.top nav a:hover { color: var(--text); }
+.lang { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.lang button { background: none; border: 0; color: var(--muted); font: 500 0.8125rem var(--font-body); padding: 6px 10px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--surface-alt); color: var(--text); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 500 0.9375rem/1 var(--font-body); text-decoration: none; cursor: pointer;
+  border-radius: 10px; padding: 13px 20px; border: 1px solid var(--border);
+  background: transparent; color: var(--text); transition: background .15s, border-color .15s;
+}
+.btn:hover { border-color: var(--dim); background: var(--surface); }
+.btn.primary { background: linear-gradient(180deg, #f2f2f3, #c9c9cc); color: var(--on-accent); border-color: transparent; }
+.btn.primary:hover { background: linear-gradient(180deg, #ffffff, #d6d6d9); }
+.btn.sm { padding: 9px 14px; font-size: 0.875rem; border-radius: 9px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.top .btn { padding: 10px 16px; }
+
+/* ---------- первый экран ---------- */
+.hero { padding-block: 72px 36px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+.eyebrow { font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; gap: 10px; align-items: center; }
+.eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+h1 { font: 800 var(--step-4)/1.02 var(--font-display); letter-spacing: -0.02em; margin: 18px 0 0; text-wrap: balance; }
+h1 .faint { color: var(--dim); }
+.lede { color: var(--muted); font-size: var(--step-1); line-height: 1.55; max-width: 34em; margin: 0; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.hero-meta { margin-top: 16px; font: 400 var(--step--1)/1.5 var(--font-mono); color: var(--dim); }
+
+.numbers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 48px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.numbers div { padding: 18px 18px 20px; border-left: 1px solid var(--border); }
+.numbers div:first-child { border-left: 0; padding-left: 0; }
+.numbers b { display: block; font: 700 var(--step-2)/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.numbers span { display: block; color: var(--muted); font-size: var(--step--1); margin-top: 6px; }
+
+/* ---------- демо-окно ---------- */
+.demo-section { padding-block: 48px 0; }
+.demo-note { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; color: var(--dim); font-size: var(--step--1); margin: 0 4px 12px; }
+kbd { font: 500 0.75rem var(--font-mono); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--muted); }
+
+.win { position: relative; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--bg); box-shadow: 0 30px 80px -20px #000, 0 0 0 1px #000; }
+.win-bar { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 6px 0 16px; background: var(--bg-top); border-bottom: 1px solid var(--border); }
+.win-bar .logo { width: 18px; height: 18px; border-radius: 5px; }
+.win-bar strong { font: 600 0.875rem var(--font-body); margin-right: auto; }
+.win-ctl { display: flex; }
+.win-ctl span { width: 40px; height: 32px; display: grid; place-items: center; color: var(--muted); }
+.win-ctl svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 1.2; }
+.win-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); height: 620px; }
+
+.side { border-right: 1px solid var(--border); padding: 18px 12px 14px; display: flex; flex-direction: column; background: linear-gradient(180deg, #141416, #0e0e10); }
+.side-label { font: 600 0.6875rem var(--font-body); letter-spacing: 0.08em; color: var(--muted); margin: 0 0 8px 14px; }
+.side nav { display: flex; flex-direction: column; gap: 2px; }
+.nav-btn { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 0; border-radius: 10px; background: none; cursor: pointer; color: var(--muted); font: 400 0.9375rem var(--font-body); text-align: left; }
+.nav-btn svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
+.nav-btn:hover { color: var(--text); }
+.nav-btn[aria-current="page"] { background: var(--surface-alt); color: var(--text); font-weight: 600; }
+.nav-btn[aria-current="page"]::before { content: ""; position: absolute; left: -12px; top: 10px; bottom: 10px; width: 2px; border-radius: 2px; background: var(--accent); }
+.side-status { margin-top: auto; border-top: 1px solid var(--border); padding: 12px 6px 0; display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 0.8125rem; }
+.side-status i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+
+.pane { overflow-y: auto; padding: 30px 34px 40px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.pane h2 { font: 700 1.75rem/1.2 var(--font-body); margin: 0; letter-spacing: -0.01em; }
+.pane .sub { color: var(--muted); font-size: 0.875rem; margin: 6px 0 0; }
+.rule { border: 0; border-top: 1px solid var(--border); margin: 22px 0; }
+.lbl { font: 600 0.6875rem var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+.score-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; margin-top: 8px; }
+.score { display: flex; align-items: baseline; gap: 12px; }
+.score .big { font: 700 4.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.score .of { font: 500 1.6rem var(--font-display); color: var(--dim); }
+.score .cap { font: 600 0.6875rem var(--font-body); letter-spacing: 0.08em; color: var(--muted); }
+.btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stat { padding: 0 18px; border-left: 1px solid var(--border); }
+.stat:first-child { padding-left: 0; border-left: 0; }
+.stat .lbl { display: flex; align-items: center; gap: 8px; }
+.stat .lbl::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.stat.live .lbl::before { background: var(--accent); box-shadow: 0 0 0 4px #e8e8ea22; }
+.stat p { margin: 10px 0 0; font-size: 0.875rem; }
+.row-split { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+.row-split h3, .card h3 { font: 600 1.05rem var(--font-body); margin: 0; }
+.row-split p { color: var(--muted); font-size: 0.8125rem; margin: 4px 0 0; }
+
+.group-title { display: flex; align-items: center; gap: 10px; margin: 22px 0 10px; }
+.group-title .count { font: 500 0.75rem var(--font-mono); color: var(--dim); }
+.tweak { display: flex; align-items: center; gap: 16px; padding: 14px 18px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.tweak .t { flex: 1; min-width: 0; }
+.tweak .name { font-weight: 600; font-size: 0.9375rem; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tag { font: 500 0.6875rem var(--font-body); color: var(--muted); background: var(--surface-alt); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+.tweak .desc { color: var(--muted); font-size: 0.8125rem; margin-top: 3px; }
+.tweak .val { font: 400 0.75rem var(--font-mono); color: var(--dim); margin-top: 4px; overflow-wrap: anywhere; }
+.tweak .warn { color: var(--accent); font-size: 0.8125rem; margin-top: 8px; }
+
+.switch { position: relative; width: 50px; height: 28px; flex: none; border-radius: 14px; border: 0; padding: 0; cursor: pointer; background: var(--surface-alt); box-shadow: inset 0 0 0 1px var(--border); transition: background .18s; }
+.switch::after { content: ""; position: absolute; top: 5px; left: 5px; width: 18px; height: 18px; border-radius: 50%; background: var(--dim); transition: transform .18s, background .18s; }
+.switch[aria-checked="true"] { background: #d8d8db; box-shadow: none; }
+.switch[aria-checked="true"]::after { transform: translateX(22px); background: var(--bg); }
+.switch:disabled { opacity: .45; cursor: default; }
+
+.card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 18px 20px; }
+.card + .card { margin-top: 12px; }
+.card .pub { color: var(--muted); font-size: 0.75rem; margin-top: 2px; }
+.pill { font-size: 0.75rem; color: var(--muted); background: var(--surface-alt); border-radius: 8px; padding: 4px 10px; white-space: nowrap; }
+.chip { display: inline-block; font: 400 0.8125rem var(--font-mono); background: var(--surface-alt); border-radius: 7px; padding: 5px 10px; }
+.sect { margin-top: 16px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.sect .t { min-width: 0; flex: 1; }
+.hint { color: var(--muted); font-size: 0.8125rem; margin: 6px 0 0; }
+.now { color: var(--dim); font: 400 0.75rem var(--font-mono); margin-top: 4px; overflow-wrap: anywhere; }
+.msg { color: var(--accent); font-size: 0.8125rem; margin-top: 12px; }
+.games { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+.games .card + .card { margin-top: 0; }
+
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--surface-alt); border-radius: 9px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 500 0.8125rem var(--font-body); padding: 6px 10px; border-radius: 7px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.preset-row { display: flex; justify-content: space-between; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.preset-row:last-child { border-bottom: 0; }
+.preset-row b { font-weight: 600; font-size: 0.9375rem; }
+
+.select { appearance: none; background: var(--surface-alt) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239a9a9e' fill='none' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 12px center / 10px; color: var(--text); border: 1px solid var(--border); border-radius: 9px; font: 400 0.875rem var(--font-body); padding: 9px 34px 9px 12px; min-width: 0; max-width: 100%; }
+.warn-list { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--muted); font-size: 0.875rem; }
+.warn-list li { padding-left: 16px; position: relative; }
+.warn-list li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 1px; background: var(--muted); }
+.progress { height: 3px; background: var(--surface-alt); border-radius: 2px; overflow: hidden; margin-top: 14px; }
+.progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+
+.ovl { position: absolute; bottom: 16px; left: 236px; z-index: 3; min-width: 168px; pointer-events: none; background: #000000d0; border: 1px solid #ffffff1c; border-radius: 10px; padding: 10px 12px; font: 400 0.75rem/1.55 var(--font-mono); color: #d8d8db; backdrop-filter: blur(6px); }
+.ovl .fps { font: 700 1.6rem/1 var(--font-display); color: #fff; font-variant-numeric: tabular-nums; }
+.ovl .k { color: #8a8a8e; }
+.ovl .ex { color: #6a6a6e; font-size: 0.625rem; margin-top: 4px; }
+.ovl dl { display: grid; grid-template-columns: auto auto; gap: 0 14px; margin: 8px 0 0; }
+.ovl dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.toast { position: absolute; right: 16px; bottom: 16px; z-index: 4; width: min(330px, calc(100% - 32px)); background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; box-shadow: 0 12px 30px -8px #000; animation: toast-in .22s ease-out; }
+.toast strong { display: block; font-size: 0.8125rem; }
+.toast span { display: block; color: var(--muted); font-size: 0.8125rem; margin-top: 2px; }
+@keyframes toast-in { from { transform: translateY(8px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+
+/* ---------- разделы сайта ---------- */
+section.block { padding-block: 96px 0; }
+.block-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 40px; align-items: end; margin-bottom: 36px; }
+.block-head h2 { font: 700 var(--step-3)/1.08 var(--font-display); margin: 12px 0 0; letter-spacing: -0.015em; text-wrap: balance; }
+.block-head p { color: var(--muted); margin: 0; max-width: 38em; }
+
+.tabs-guide { border-top: 1px solid var(--border); }
+.tab-row { display: grid; grid-template-columns: 240px minmax(0, 1fr) minmax(0, 1fr); gap: 32px; padding: 26px 0; border-bottom: 1px solid var(--border); }
+.tab-name { display: flex; gap: 12px; align-items: flex-start; }
+.tab-name svg { width: 20px; height: 20px; fill: var(--muted); flex: none; margin-top: 3px; }
+.tab-name h3 { font: 600 var(--step-1)/1.3 var(--font-body); margin: 0; }
+.tab-name .idx { font: 400 0.75rem var(--font-mono); color: var(--dim); display: block; margin-top: 2px; }
+.tab-row > p { color: var(--muted); margin: 0; font-size: 0.9375rem; }
+.tab-row ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; font-size: 0.9375rem; }
+.tab-row li { padding-left: 16px; position: relative; }
+.tab-row li::before { content: ""; position: absolute; left: 0; top: 0.75em; width: 7px; height: 1px; background: var(--dim); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: 0; }
+th { font: 600 0.6875rem var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: var(--bg-top); white-space: nowrap; }
+td .path { color: var(--dim); font: 400 0.72rem/1.5 var(--font-mono); overflow-wrap: anywhere; margin-top: 3px; }
+td.c, th.c { text-align: center; }
+.yes { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.no { display: inline-block; width: 9px; height: 1px; background: var(--dim); vertical-align: middle; }
+tfoot td { color: var(--muted); background: var(--bg-top); font-size: 0.8125rem; border-top: 1px solid var(--border); border-bottom: 0; }
+.arrow { color: var(--dim); padding: 0 6px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.filters button { border: 1px solid var(--border); background: none; color: var(--muted); font: 500 0.8125rem var(--font-body); padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+.filters .n { font-family: var(--font-mono); opacity: .7; margin-left: 6px; }
+.note { color: var(--dim); font-size: var(--step--1); margin-top: 12px; overflow-wrap: anywhere; }
+
+.presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--border); margin-bottom: 28px; }
+.preset { padding: 22px 24px 24px 0; }
+.preset + .preset { padding-left: 24px; border-left: 1px solid var(--border); }
+.preset h3 { font: 700 var(--step-2)/1.1 var(--font-display); margin: 0; }
+.preset p { color: var(--muted); margin: 10px 0 0; font-size: 0.9375rem; }
+.preset .spec { font: 400 0.75rem/1.6 var(--font-mono); color: var(--dim); margin-top: 14px; }
+
+.game-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 20px; border-top: 1px solid var(--border); margin-bottom: 32px; }
+.game-grid div { padding: 14px 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.game-grid b { font-weight: 500; font-size: 0.9375rem; }
+.game-grid span { font-size: 0.75rem; color: var(--dim); font-family: var(--font-mono); }
+
+.safety { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; }
+.vt { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); padding: 30px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; }
+.vt .num { font: 800 clamp(4rem, 11vw, 7.5rem)/0.9 var(--font-display); letter-spacing: -0.03em; }
+.vt .num span { color: var(--dim); }
+.vt p { margin: 0; color: var(--muted); }
+.vt .src { font: 400 0.75rem var(--font-mono); color: var(--dim); margin-top: 6px; }
+.vt ul { margin: 0; padding: 18px 0 0; list-style: none; display: grid; gap: 8px; color: var(--muted); font-size: 0.9375rem; border-top: 1px solid var(--border); }
+.vt li::before { content: "×"; color: var(--dim); margin-right: 10px; font-family: var(--font-mono); }
+.facts .fact { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.facts .fact:first-child { padding-top: 4px; }
+.fact h3 { font: 600 var(--step-1) var(--font-body); margin: 0; }
+.fact p { color: var(--muted); margin: 6px 0 0; font-size: 0.9375rem; }
+
+.install { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; }
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; border-top: 1px solid var(--border); }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 8px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.steps li::before { content: counter(s, decimal-leading-zero); font: 500 0.875rem var(--font-mono); color: var(--dim); padding-top: 3px; }
+.steps h3 { font: 600 var(--step-1)/1.3 var(--font-body); margin: 0; }
+.steps p { color: var(--muted); margin: 6px 0 0; font-size: 0.9375rem; }
+.req { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); padding: 6px 22px; align-self: start; }
+.req dl { margin: 0; }
+.req div { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.req div:last-child { border-bottom: 0; }
+.req dt { font: 600 0.6875rem var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.req dd { margin: 5px 0 0; font-size: 0.9375rem; }
+.req dd code { color: var(--muted); overflow-wrap: anywhere; }
+
+.versions { border-top: 1px solid var(--border); }
+.versions details { border-bottom: 1px solid var(--border); }
+.versions summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 20px; align-items: baseline; padding: 20px 0; }
+.versions summary::-webkit-details-marker { display: none; }
+.versions summary b { font: 700 var(--step-1) var(--font-display); }
+.versions summary > span { color: var(--muted); }
+.versions summary::after { content: "+"; font: 400 1.4rem/1 var(--font-body); color: var(--muted); transition: transform .2s; }
+.versions details[open] summary::after { transform: rotate(45deg); }
+.versions ul { margin: -4px 0 24px 130px; padding: 0; list-style: none; display: grid; gap: 10px; max-width: 52em; }
+.versions li { color: var(--muted); font-size: 0.9375rem; }
+.versions li b { color: var(--text); font-weight: 600; }
+
+.faq { border-top: 1px solid var(--border); }
+.faq details { border-bottom: 1px solid var(--border); }
+.faq summary { cursor: pointer; list-style: none; padding: 20px 0; font: 500 var(--step-1) var(--font-body); display: flex; justify-content: space-between; gap: 20px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font: 400 1.4rem/1 var(--font-body); color: var(--muted); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { color: var(--muted); margin: -6px 0 22px; max-width: 48em; }
+
+.cta { margin-top: 100px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding-block: 56px; display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap; }
+.cta h2 { font: 700 var(--step-3)/1.1 var(--font-display); margin: 0; max-width: 14em; text-wrap: balance; }
+footer { padding-block: 28px 44px; color: var(--dim); font-size: 0.8125rem; display: flex; justify-content: space-between; gap: 12px 28px; flex-wrap: wrap; }
+footer a { color: var(--muted); }
+
+@media (max-width: 1100px) {
+  .top nav { gap: 16px; }
+  .top nav a:nth-child(n+5) { display: none; }
+}
+@media (max-width: 960px) {
+  .hero-grid, .block-head, .safety, .install { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .numbers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .numbers div:nth-child(4) { border-left: 0; padding-left: 0; }
+  .numbers div:nth-child(n+4) { border-top: 1px solid var(--border); }
+  .tab-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px 28px; }
+  .tab-name { grid-column: 1 / -1; }
+  .presets { grid-template-columns: minmax(0, 1fr); }
+  .preset, .preset + .preset { padding: 22px 0; border-left: 0; border-bottom: 1px solid var(--border); }
+  .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .top nav { display: none; }
+  .top .wrap { gap: 14px; }
+  .brand { margin-right: auto; }
+}
+@media (max-width: 760px) {
+  .win-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); height: 660px; }
+  .side { border-right: 0; border-bottom: 1px solid var(--border); padding: 8px; }
+  .side-label, .side-status { display: none; }
+  .side nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+  .nav-btn { width: auto; white-space: nowrap; padding: 8px 12px; gap: 8px; font-size: 0.875rem; }
+  .nav-btn[aria-current="page"]::before { display: none; }
+  .pane { padding: 22px 18px 32px; }
+  .stat-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .stat, .stat:first-child { padding: 0; border-left: 0; }
+  .games { grid-template-columns: minmax(0, 1fr); }
+  .score .big { font-size: 3.4rem; }
+  .ovl { top: 104px; bottom: auto; left: auto; right: 12px; min-width: 0; padding: 7px 10px; }
+  .ovl dl, .ovl .ex { display: none; }
+  .ovl .fps { font-size: 1.2rem; }
+  .sect { flex-direction: column; gap: 10px; }
+  .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .numbers div, .numbers div:nth-child(4) { border-left: 0; padding-left: 0; }
+  .numbers div:nth-child(2n) { border-left: 1px solid var(--border); padding-left: 16px; }
+  .numbers div:nth-child(n+3) { border-top: 1px solid var(--border); }
+  .numbers div:nth-child(5) { grid-column: 1 / -1; border-left: 0; padding-left: 0; }
+  .tab-row { grid-template-columns: minmax(0, 1fr); }
+  .versions summary { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; }
+  .versions summary > span { grid-column: 1; grid-row: 2; }
+  .versions summary::after { grid-row: 1; grid-column: 2; }
+  .versions ul { margin-left: 0; }
+  .hero { padding-block: 44px 28px; }
+  section.block { padding-block: 72px 0; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo" aria-hidden="true"></span>OPEN</a>
+    <nav>
+      <a href="#demo"><span data-l="ru">Демо</span><span data-l="en">Demo</span></a>
+      <a href="#tabs"><span data-l="ru">Возможности</span><span data-l="en">Features</span></a>
+      <a href="#tweaks"><span data-l="ru">Твики</span><span data-l="en">Tweaks</span></a>
+      <a href="#games"><span data-l="ru">Игры</span><span data-l="en">Games</span></a>
+      <a href="#install"><span data-l="ru">Установка</span><span data-l="en">Install</span></a>
+      <a href="#faq"><span data-l="ru">Вопросы</span><span data-l="en">FAQ</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать</span><span data-l="en">Download</span></a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ===================== Первый экран ===================== -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Версия 0.7.4 · Windows 10 / 11</span><span data-l="en">Version 0.7.4 · Windows 10 / 11</span></div>
+          <h1><span data-l="ru">Windows,<br>настроенная <span class="faint">под&nbsp;игры</span></span><span data-l="en">Windows,<br>tuned <span class="faint">for&nbsp;games</span></span></h1>
+        </div>
+        <div>
+          <p class="lede" data-l="ru">OPEN включает проверенные твики Windows, NVIDIA, сети и ввода, сам применяет профиль при запуске игры, настраивает игры изнутри и показывает FPS поверх игры. Каждый твик откатывается к прежнему значению.</p>
+          <p class="lede" data-l="en">OPEN turns on proven Windows, NVIDIA, network and input tweaks, applies a profile when a game starts, sets up games from the inside and shows FPS on top of the game. Every tweak reverts to its previous value.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN 0.7.4</span><span data-l="en">Download OPEN 0.7.4</span></a>
+            <a class="btn" href="#demo"><span data-l="ru">Попробовать в браузере</span><span data-l="en">Try it in the browser</span></a>
+          </div>
+          <div class="hero-meta"><span data-l="ru">x64 · установщик для Windows · нужны права администратора</span><span data-l="en">x64 · Windows installer · requires administrator rights</span></div>
+        </div>
+      </div>
+      <div class="numbers">
+        <div><b>18</b><span data-l="ru">твиков реестра в 6 группах</span><span data-l="en">registry tweaks in 6 groups</span></div>
+        <div><b>3</b><span data-l="ru">пресета: Киберспорт, Баланс, Качество</span><span data-l="en">presets: Esports, Balanced, Quality</span></div>
+        <div><b>19</b><span data-l="ru">игр узнаёт автопилот</span><span data-l="en">games the autopilot recognizes</span></div>
+        <div><b>6</b><span data-l="ru">игр с настройками внутри игры</span><span data-l="en">games with in-game settings</span></div>
+        <div><b>0/67</b><span data-l="ru">на VirusTotal (версия 0.7.3)</span><span data-l="en">on VirusTotal (version 0.7.3)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Живое демо ===================== -->
+  <section class="demo-section" id="demo">
+    <div class="wrap">
+      <div class="demo-note">
+        <span><span data-l="ru">Демо работает в браузере и ничего не меняет на вашем компьютере. Нажимайте всё.</span><span data-l="en">The demo runs in your browser and changes nothing on your PC. Click anything.</span></span>
+        <span><span data-l="ru">Оверлей:</span><span data-l="en">Overlay:</span> <kbd>Alt</kbd> + <kbd>F11</kbd></span>
+      </div>
+      <div class="win" id="app">
+        <div class="win-bar">
+          <span class="logo" aria-hidden="true"></span>
+          <strong>OPEN</strong>
+          <div class="win-ctl" aria-hidden="true">
+            <span><svg viewBox="0 0 11 11"><path d="M1 5.5h9"/></svg></span>
+            <span><svg viewBox="0 0 11 11"><rect x="1" y="1" width="9" height="9"/></svg></span>
+            <span><svg viewBox="0 0 11 11"><path d="M1 1l9 9M10 1l-9 9"/></svg></span>
+          </div>
+        </div>
+        <div class="win-body">
+          <aside class="side">
+            <div class="side-label" id="t-menu">МЕНЮ</div>
+            <nav id="app-nav" aria-label="OPEN"></nav>
+            <div class="side-status"><i></i><span id="app-status">Готов</span></div>
+          </aside>
+          <div class="pane" id="pane" tabindex="-1"></div>
+        </div>
+        <div class="ovl" id="ovl" hidden></div>
+        <div class="toast" id="toast" hidden role="status" aria-live="polite"><strong></strong><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Вкладки ===================== -->
+  <section class="block" id="tabs">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Возможности</span><span data-l="en">Features</span></div>
+          <h2><span data-l="ru">Девять вкладок, и что в каждой</span><span data-l="en">Nine tabs and what's in each</span></h2>
+        </div>
+        <p data-l="ru">OPEN не делает ничего скрытого. У каждой настройки написано, какой параметр она меняет и на какое значение, а исходное значение сохраняется до правки.</p>
+        <p data-l="en">OPEN does nothing hidden. Each setting says which parameter it changes and to what value, and the original value is saved before the change.</p>
+      </div>
+      <div class="tabs-guide" id="tabs-guide"></div>
+    </div>
+  </section>
+
+  <!-- ===================== Пресеты ===================== -->
+  <section class="block" id="presets">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Пресеты</span><span data-l="en">Presets</span></div>
+          <h2><span data-l="ru">Что включает каждый пресет</span><span data-l="en">What each preset turns on</span></h2>
+        </div>
+        <p data-l="ru">Пресет выбирается для каждой игры отдельно и применяется автопилотом при её запуске. Неизвестной игре, пойманной в полноэкранном режиме, достаётся «Баланс».</p>
+        <p data-l="en">A preset is picked per game and applied by the autopilot when that game starts. An unknown game caught in fullscreen gets "Balanced".</p>
+      </div>
+      <div class="presets" id="preset-cards"></div>
+      <div class="table-wrap"><table id="preset-table"></table></div>
+    </div>
+  </section>
+
+  <!-- ===================== Таблица твиков ===================== -->
+  <section class="block" id="tweaks">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Справочник</span><span data-l="en">Reference</span></div>
+          <h2><span data-l="ru">Что именно меняет OPEN</span><span data-l="en">Exactly what OPEN changes</span></h2>
+        </div>
+        <p data-l="ru">Все 18 твиков вкладки «Оптимизация»: ключ реестра, значение Windows по умолчанию и значение OPEN. «Нет значения» значит, что по умолчанию параметра нет, и откат его удаляет.</p>
+        <p data-l="en">All 18 tweaks from the Optimization tab: the registry key, the Windows default and the OPEN value. "Not set" means the parameter doesn't exist by default, and reverting deletes it.</p>
+      </div>
+      <div class="filters" id="tweak-filters"></div>
+      <div class="table-wrap"><table id="tweak-table"></table></div>
+      <p class="note"><span data-l="ru">Твики NVIDIA пишутся в профиль драйвера и применяются, только если найдена видеокарта NVIDIA. Ключ сокращён, полный путь: HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000.</span><span data-l="en">NVIDIA tweaks go into the driver profile and apply only when an NVIDIA card is found. The key is shortened; the full path is HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000.</span></p>
+    </div>
+  </section>
+
+  <!-- ===================== Игры ===================== -->
+  <section class="block" id="games">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Игры</span><span data-l="en">Games</span></div>
+          <h2><span data-l="ru">Какие игры OPEN знает</span><span data-l="en">Which games OPEN knows</span></h2>
+        </div>
+        <p data-l="ru">Автопилот узнаёт эти игры по имени процесса и применяет пресет. Под названием стоит пресет по умолчанию, его можно поменять. Остальные игры ловятся по полноэкранному режиму, если включено автоопределение.</p>
+        <p data-l="en">The autopilot recognizes these games by process name and applies a preset. The default preset is under each name and can be changed. Other games are caught by fullscreen mode when auto-detect is on.</p>
+      </div>
+      <div class="game-grid" id="game-grid"></div>
+      <div class="table-wrap"><table id="ingame-table"></table></div>
+      <p class="note"><span data-l="ru">Опции запуска меняются при закрытом Steam, видеонастройки при закрытой игре: при выходе они перезаписывают свои файлы. Перед каждой правкой OPEN сохраняет копию файла.</span><span data-l="en">Launch options are changed while Steam is closed, video settings while the game is closed, because on exit they overwrite their files. OPEN copies the file before every change.</span></p>
+    </div>
+  </section>
+
+  <!-- ===================== Безопасность ===================== -->
+  <section class="block" id="safety">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Безопасность</span><span data-l="en">Safety</span></div>
+          <h2><span data-l="ru">Можно ставить на игровой ПК</span><span data-l="en">Fine for a gaming PC</span></h2>
+        </div>
+        <p data-l="ru">OPEN работает только с настройками Windows, драйвера и файлами настроек игр. В процессы игр он не лезет.</p>
+        <p data-l="en">OPEN only works with Windows and driver settings and game config files. It stays out of game processes.</p>
+      </div>
+      <div class="safety">
+        <div class="vt">
+          <div>
+            <div class="num">0<span>/67</span></div>
+            <p style="margin-top:14px"><span data-l="ru">антивирусов на VirusTotal нашли угрозу в установщике OPEN.</span><span data-l="en">antivirus engines on VirusTotal flagged the OPEN installer.</span></p>
+            <div class="src"><span data-l="ru">проверка версии 0.7.3</span><span data-l="en">scan of version 0.7.3</span></div>
+          </div>
+          <ul>
+            <li><span data-l="ru">Не внедряется в игры и не читает их память</span><span data-l="en">Doesn't inject into games or read their memory</span></li>
+            <li><span data-l="ru">Не трогает файлы игр, кроме файлов настроек графики</span><span data-l="en">Doesn't touch game files except graphics config files</span></li>
+            <li><span data-l="ru">Не требует аккаунта и не отправляет данные о вас</span><span data-l="en">Needs no account and sends no data about you</span></li>
+            <li><span data-l="ru">Не включает рискованные настройки кнопкой «Оптимизировать»</span><span data-l="en">Doesn't turn on risky settings with "Optimize all"</span></li>
+          </ul>
+        </div>
+        <div class="facts">
+          <div class="fact">
+            <h3><span data-l="ru">Замер FPS без внедрения</span><span data-l="en">FPS capture without injection</span></h3>
+            <p data-l="ru">Кадры считаются по системным событиям Windows (ETW, провайдер Microsoft-Windows-DXGI), тем же способом, что у PresentMon. Кадр дольше 50 мс считается подфризом.</p>
+            <p data-l="en">Frames are counted from Windows system events (ETW, the Microsoft-Windows-DXGI provider), the same way PresentMon does it. A frame longer than 50 ms counts as a stutter.</p>
+          </div>
+          <div class="fact">
+            <h3><span data-l="ru">Откат точь-в-точь</span><span data-l="en">Exact revert</span></h3>
+            <p data-l="ru">Перед каждой правкой реестра OPEN запоминает старое значение. Перед правкой настроек Steam и игр делает копию файла. Парковка ядер помнит значения каждой схемы питания.</p>
+            <p data-l="en">Before every registry change OPEN remembers the old value. Before changing Steam or game settings it copies the file. Core parking remembers the values of each power plan.</p>
+          </div>
+          <div class="fact">
+            <h3><span data-l="ru">Без уязвимых драйверов</span><span data-l="en">No vulnerable drivers</span></h3>
+            <p data-l="ru">Температуры CPU читаются через подписанный драйвер PawnIO. Старый WinRing0, который Defender помечает как HackTool, убран.</p>
+            <p data-l="en">CPU temperatures are read through the signed PawnIO driver. The old WinRing0, which Defender flags as a HackTool, is gone.</p>
+          </div>
+          <div class="fact">
+            <h3><span data-l="ru">Проверка конфликтов</span><span data-l="en">Conflict checks</span></h3>
+            <p data-l="ru">Несовместимые настройки, например HPET и таймер 0.5 мс, нельзя включить вместе. Попробуйте в демо на вкладке «Система». Снять запрет можно доверенным режимом.</p>
+            <p data-l="en">Settings that cancel each other out, like HPET and the 0.5 ms timer, can't be on together. Try it on the System tab of the demo. Trusted mode lifts this.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Установка ===================== -->
+  <section class="block" id="install">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Установка</span><span data-l="en">Install</span></div>
+          <h2><span data-l="ru">От скачивания до первой игры</span><span data-l="en">From download to first game</span></h2>
+        </div>
+        <p data-l="ru">Установка занимает пару минут. Дальше OPEN обновляется сам.</p>
+        <p data-l="en">Setup takes a couple of minutes. After that OPEN updates itself.</p>
+      </div>
+      <div class="install">
+        <ol class="steps">
+          <li><div><h3><span data-l="ru">Скачайте установщик</span><span data-l="en">Download the installer</span></h3>
+            <p data-l="ru">Файл OPEN-Setup-0.7.4.exe лежит на странице релизов GitHub.</p><p data-l="en">OPEN-Setup-0.7.4.exe is on the GitHub releases page.</p></div></li>
+          <li><div><h3><span data-l="ru">Запустите и разрешите права администратора</span><span data-l="en">Run it and allow administrator rights</span></h3>
+            <p data-l="ru">Без них OPEN не сможет менять системный раздел реестра и считать кадры. Если SmartScreen покажет предупреждение, нажмите «Подробнее» и «Выполнить в любом случае».</p>
+            <p data-l="en">OPEN needs them to change the system part of the registry and count frames. If SmartScreen shows a warning, click "More info" and "Run anyway".</p></div></li>
+          <li><div><h3><span data-l="ru">Выберите язык и пройдите авто-настройку</span><span data-l="en">Pick a language and run auto-setup</span></h3>
+            <p data-l="ru">OPEN определит процессор, видеокарту и память и предложит набор твиков. Вы смотрите список и подтверждаете.</p>
+            <p data-l="en">OPEN detects your CPU, GPU and memory and suggests a set of tweaks. You review the list and confirm.</p></div></li>
+          <li><div><h3><span data-l="ru">Сделайте замер «До» и «После»</span><span data-l="en">Measure "Before" and "After"</span></h3>
+            <p data-l="ru">На вкладке «Производительность» запустите бенчмарк в игре до оптимизации и после. OPEN покажет разницу в среднем FPS, 1% и 0.1% low.</p>
+            <p data-l="en">On the Performance tab, run the benchmark in a game before and after optimizing. OPEN shows the difference in average FPS, 1% and 0.1% low.</p></div></li>
+        </ol>
+        <div class="req">
+          <dl>
+            <div><dt><span data-l="ru">Система</span><span data-l="en">System</span></dt><dd>Windows 10 / 11, 64-bit</dd></div>
+            <div><dt><span data-l="ru">Права</span><span data-l="en">Rights</span></dt><dd><span data-l="ru">Администратор. Автозапуск с Windows идёт через запланированную задачу, поэтому UAC при входе не спрашивает.</span><span data-l="en">Administrator. Autostart runs through a scheduled task, so UAC doesn't ask at sign-in.</span></dd></div>
+            <div><dt><span data-l="ru">Видеокарта</span><span data-l="en">Graphics card</span></dt><dd><span data-l="ru">Любая. Твики и профиль NVIDIA включаются только на NVIDIA.</span><span data-l="en">Any. NVIDIA tweaks and the NVIDIA profile apply only on NVIDIA.</span></dd></div>
+            <div><dt><span data-l="ru">Настройки</span><span data-l="en">Settings</span></dt><dd><code>%AppData%\OPEN\settings.json</code></dd></div>
+            <div><dt><span data-l="ru">Модуль «Запрет»</span><span data-l="en">Zapret module</span></dt><dd><code>%LocalAppData%\OPEN\zapret</code></dd></div>
+            <div><dt><span data-l="ru">Интернет</span><span data-l="en">Internet</span></dt><dd><span data-l="ru">Только для обновлений, замера DNS и скачивания «Запрета».</span><span data-l="en">Only for updates, DNS latency checks and downloading Zapret.</span></dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== История версий ===================== -->
+  <section class="block" id="versions">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">История версий</span><span data-l="en">Version history</span></div>
+          <h2><span data-l="ru">Что менялось</span><span data-l="en">What changed</span></h2>
+        </div>
+        <p data-l="ru">При первом запуске новой версии твики сбрасываются к настройкам Windows, затем OPEN предлагает авто-настройку. DNS, удалённые приложения, автозагрузка и профиль NVIDIA при этом не трогаются.</p>
+        <p data-l="en">On the first launch of a new version tweaks reset to Windows defaults, then OPEN offers auto-setup. DNS, removed apps, startup items and the NVIDIA profile aren't touched.</p>
+      </div>
+      <div class="versions">
+        <details open>
+          <summary><b>0.7.4</b><span><span data-l="ru">Вкладка «Запрет»</span><span data-l="en">Zapret tab</span></span></summary>
+          <ul data-l="ru">
+            <li><b>Запрет.</b> Обход замедления Discord и YouTube на сборке zapret-discord-youtube от Flowseal. Модуль скачивается по кнопке и не входит в установщик.</li>
+            <li><b>Подбор стратегии.</b> OPEN перебирает варианты обхода и оставляет первый, при котором открываются Discord и YouTube.</li>
+            <li><b>Автообновление модуля.</b> Раз в 6 часов проверка новой версии. Ваш список сайтов сохраняется.</li>
+            <li><b>Пауза для анти-читов.</b> Пока запущены Valorant, League of Legends, FACEIT или ESEA, обход выключен, драйвер выгружен.</li>
+          </ul>
+          <ul data-l="en">
+            <li><b>Zapret.</b> Bypasses Discord and YouTube throttling with the zapret-discord-youtube build by Flowseal. The module is downloaded on request and isn't in the installer.</li>
+            <li><b>Strategy auto-pick.</b> OPEN tries the bypass variants and keeps the first one that makes Discord and YouTube open.</li>
+            <li><b>Module auto-update.</b> Checks for a new version every 6 hours. Your site list is kept.</li>
+            <li><b>Anti-cheat pause.</b> While Valorant, League of Legends, FACEIT or ESEA is running, the bypass is off and the driver unloaded.</li>
+          </ul>
+        </details>
+        <details>
+          <summary><b>0.7.3</b><span><span data-l="ru">Вкладка «Игры», автопилот, чистый VirusTotal</span><span data-l="en">Games tab, autopilot, clean VirusTotal</span></span></summary>
+          <ul data-l="ru">
+            <li><b>Игры.</b> Опции запуска Steam, переключатель Vulkan / DX11, видеонастройки Apex и Fortnite на минимум с откатом, текстуры Fortnite под видеопамять.</li>
+            <li><b>Автопилот.</b> При запуске игры OPEN сам применяет её профиль и boost и сообщает об этом в трее. Добавлен профиль Deadlock.</li>
+            <li><b>Антивирусы.</b> Убран драйвер WinRing0, вместо него PawnIO. Очистка памяти теперь в самом OPEN и наконец срабатывает правильно.</li>
+          </ul>
+          <ul data-l="en">
+            <li><b>Games.</b> Steam launch options, a Vulkan / DX11 toggle, Apex and Fortnite video settings to minimum with revert, Fortnite textures for your video memory.</li>
+            <li><b>Autopilot.</b> When a game starts, OPEN applies its profile and boost and tells you in the tray. Added a Deadlock profile.</li>
+            <li><b>Antivirus.</b> Removed the WinRing0 driver in favor of PawnIO. Memory cleanup now runs inside OPEN and finally works correctly.</li>
+          </ul>
+        </details>
+        <details>
+          <summary><b>0.7.2</b><span><span data-l="ru">Английский интерфейс, проверка конфликтов</span><span data-l="en">English interface, conflict checks</span></span></summary>
+          <ul data-l="ru">
+            <li><b>Английский язык.</b> Весь интерфейс на русском и английском, окно «Что нового» после обновления.</li>
+            <li><b>Конфликты.</b> HPET и таймер 0.5 мс нельзя включить вместе. Сетевые твики на двух вкладках стали одним переключателем.</li>
+            <li><b>Убраны два твика без эффекта:</b> «GPU-приоритет задач Games» и «Отключить Nagle». Если были включены, OPEN откатил их сам.</li>
+            <li><b>Доверенный режим</b> для опытных пользователей и тёмные окна вместо стандартных диалогов Windows.</li>
+          </ul>
+          <ul data-l="en">
+            <li><b>English.</b> The whole interface in Russian and English, a "What's new" window after updates.</li>
+            <li><b>Conflicts.</b> HPET and the 0.5 ms timer can't be on together. Network tweaks on two tabs became one toggle.</li>
+            <li><b>Removed two tweaks with no effect:</b> "GPU priority for Games tasks" and "Disable Nagle". If they were on, OPEN reverted them.</li>
+            <li><b>Trusted mode</b> for advanced users and dark dialogs instead of standard Windows ones.</li>
+          </ul>
+        </details>
+        <details>
+          <summary><b>0.7.1</b><span><span data-l="ru">Бенчмарк, узкое место, отчёты сессий</span><span data-l="en">Benchmark, bottleneck, session reports</span></span></summary>
+          <ul data-l="ru">
+            <li><b>Бенчмарк «до / после»</b> со средним FPS, 1% и 0.1% low и разницей в процентах.</li>
+            <li><b>Анализ узкого места:</b> во что упирается FPS, в процессор или в видеокарту.</li>
+            <li><b>Отчёты по сессиям</b> с подфризами и температурами, выгрузка в CSV.</li>
+            <li><b>Усыпление фона</b> на время игры и авто-откат твиков после выхода. Таймер 0.5 мс восстанавливается при каждом запуске.</li>
+          </ul>
+          <ul data-l="en">
+            <li><b>Before / after benchmark</b> with average FPS, 1% and 0.1% low and the percentage difference.</li>
+            <li><b>Bottleneck analysis:</b> whether FPS is limited by the CPU or the GPU.</li>
+            <li><b>Session reports</b> with stutters and temperatures, CSV export.</li>
+            <li><b>Background suspend</b> while gaming and auto-revert after exit. The 0.5 ms timer is restored on every launch.</li>
+          </ul>
+        </details>
+        <details>
+          <summary><b>0.7.0</b><span><span data-l="ru">Вкладка «Система»</span><span data-l="en">System tab</span></span></summary>
+          <ul data-l="ru">
+            <li><b>Система.</b> Автозагрузка, DNS с автовыбором самого быстрого, удаление встроенных приложений, системные твики, частота монитора, точка восстановления, очистка.</li>
+            <li><b>Оверлей.</b> График фреймтайма и 0.1% low.</li>
+          </ul>
+          <ul data-l="en">
+            <li><b>System.</b> Startup apps, DNS with automatic fastest pick, built-in app removal, system tweaks, monitor refresh rate, restore point, cleanup.</li>
+            <li><b>Overlay.</b> Frame time graph and 0.1% low.</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="block" id="faq">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Вопросы</span><span data-l="en">FAQ</span></div>
+          <h2><span data-l="ru">Частые вопросы</span><span data-l="en">Common questions</span></h2>
+        </div>
+        <p></p>
+      </div>
+      <div class="faq">
+        <details><summary><span data-l="ru">Насколько вырастет FPS?</span><span data-l="en">How much FPS will I get?</span></summary>
+          <p data-l="ru">Зависит от компьютера и игры, обещать конкретные цифры было бы нечестно. Чаще всего заметнее всего меняются 1% low и подфризы, а не средний FPS. Проверьте сами бенчмарком «до / после».</p>
+          <p data-l="en">It depends on the PC and the game, so promising a number would be dishonest. Usually 1% low and stutters improve more than average FPS. Check for yourself with the before / after benchmark.</p></details>
+        <details><summary><span data-l="ru">Меня не забанят?</span><span data-l="en">Can I get banned?</span></summary>
+          <p data-l="ru">OPEN не внедряется в игры и не читает их память. Он меняет настройки Windows, драйвера и файлы графики игр, то же самое можно сделать вручную. Модуль «Запрет» на время Valorant, LoL, FACEIT и ESEA сам выключается.</p>
+          <p data-l="en">OPEN doesn't inject into games or read their memory. It changes Windows, driver and game graphics settings, which you could change by hand. The Zapret module turns itself off during Valorant, LoL, FACEIT and ESEA.</p></details>
+        <details><summary><span data-l="ru">У меня видеокарта AMD или Intel. OPEN подойдёт?</span><span data-l="en">I have an AMD or Intel GPU. Will OPEN work?</span></summary>
+          <p data-l="ru">Да. Твики NVIDIA и импорт профиля драйвера просто пропускаются, всё остальное работает: Windows, сеть, ввод, игры, оверлей, замеры.</p>
+          <p data-l="en">Yes. NVIDIA tweaks and the driver profile import are skipped; everything else works: Windows, network, input, games, overlay, benchmarks.</p></details>
+        <details><summary><span data-l="ru">Как всё вернуть?</span><span data-l="en">How do I undo everything?</span></summary>
+          <p data-l="ru">Кнопка «Откатить всё» на главной вернёт все твики к значениям, которые были до OPEN. Отдельный твик выключается своим переключателем. Удалённые встроенные приложения возвращаются через Microsoft Store, а для всей системы есть точка восстановления.</p>
+          <p data-l="en">"Revert all" on Home returns every tweak to its value before OPEN. A single tweak is turned off with its own toggle. Removed built-in apps come back from the Microsoft Store, and there's a restore point for the whole system.</p></details>
+        <details><summary><span data-l="ru">Как удалить OPEN?</span><span data-l="en">How do I uninstall OPEN?</span></summary>
+          <p data-l="ru">Сначала нажмите «Откатить всё», затем удалите OPEN через «Параметры» → «Приложения». Если включали «Запрет», удалите модуль кнопкой на его вкладке.</p>
+          <p data-l="en">Click "Revert all" first, then uninstall OPEN from Settings → Apps. If you used Zapret, remove the module with the button on its tab.</p></details>
+        <details><summary><span data-l="ru">Оверлей не показывает FPS</span><span data-l="en">The overlay shows no FPS</span></summary>
+          <p data-l="ru">OPEN считает кадры по событиям DXGI. Игры, которые выводят кадры в обход DXGI (часть игр на OpenGL и Vulkan), могут не отображаться. Ещё проверьте, что OPEN запущен от администратора.</p>
+          <p data-l="en">OPEN counts frames from DXGI events. Games that present frames without DXGI (some OpenGL and Vulkan games) may not show up. Also check that OPEN runs as administrator.</p></details>
+        <details><summary><span data-l="ru">Можно выключить автообновление?</span><span data-l="en">Can I turn off auto-update?</span></summary>
+          <p data-l="ru">Да, в «Настройках» в разделе «Обновления». Проверить вручную можно там же.</p>
+          <p data-l="en">Yes, in Settings under Updates. You can also check manually there.</p></details>
+        <details><summary><span data-l="ru">Как перенести настройки на другой ПК?</span><span data-l="en">How do I move settings to another PC?</span></summary>
+          <p data-l="ru">В «Настройках» есть резервная копия: все профили, пресеты и настройки сохраняются в один файл и восстанавливаются из него. Облака нет.</p>
+          <p data-l="en">Settings has a backup: all profiles, presets and settings are saved to one file and restored from it. There's no cloud.</p></details>
+      </div>
+
+      <div class="cta">
+        <h2><span data-l="ru">Поставьте OPEN и сравните FPS до и после</span><span data-l="en">Install OPEN and compare FPS before and after</span></h2>
+        <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN 0.7.4</span><span data-l="en">Download OPEN 0.7.4</span></a>
+      </div>
+      <footer>
+        <span>OPEN · 2026</span>
+        <span><a href="https://github.com/pirogovv-collab/OPEN" target="_blank" rel="noopener">GitHub</a></span>
+        <span><span data-l="ru">«Запрет» использует zapret (bol-van) и сборку Flowseal по лицензии MIT, драйвер WinDivert по лицензии LGPL v3.</span><span data-l="en">Zapret uses zapret (bol-van) and the Flowseal build under the MIT license, and the WinDivert driver under LGPL v3.</span></span>
+      </footer>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  // ============== Данные (взяты из кода OPEN 0.7.4) ==============
+  const ICONS = {
+    home: "M12 3L3 11h3v9h4v-6h4v6h4v-9h3z",
+    bolt: "M13 2L4 14h7l-1 8 10-13h-7z",
+    pad: "M7 7h10c2.8 0 5 2.2 5 5v3a3 3 0 0 1-5.6 1.5l-1-1.6H8.6l-1 1.6A3 3 0 0 1 2 15v-3c0-2.8 2.2-5 5-5z",
+    play: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 5.5 6.5 4.5-6.5 4.5z",
+    chart: "M4 20V10h3v10zm6.5 0V4h3v16zm6.5 0v-7h3v7z",
+    wrench: "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z",
+    chip: "M6 6h12v12H6z M9 2h1.4v3H9z M13.6 2H15v3h-1.4z M9 19h1.4v3H9z M13.6 19H15v3h-1.4z M2 9h3v1.4H2z M2 13.6h3V15H2z M19 9h3v1.4h-3z M19 13.6h3V15h-3z",
+    shield: "M12 2 4 5v6c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4z",
+    gear: "M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.3 7.3 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.5.5 0 0 0-.61.22L2.74 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.42.34.61.22l2.39-.96c.49.38 1.03.7 1.62.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.19.12.47.02.61-.22l1.92-3.32a.5.5 0 0 0-.12-.64zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"
+  };
+
+  const GROUPS = [
+    { id: "win", ru: "Windows и планировщик", en: "Windows & scheduler" },
+    { id: "gpu", ru: "Видеокарта", en: "GPU" },
+    { id: "nv", ru: "NVIDIA", en: "NVIDIA" },
+    { id: "pow", ru: "Питание", en: "Power" },
+    { id: "net", ru: "Сеть", en: "Network" },
+    { id: "inp", ru: "Мышь и клавиатура", en: "Mouse & keyboard" }
+  ];
+  const NV = "HKLM\\…\\Class\\{4d36e968…}\\0000";
+  const MM = "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile";
+  const TWEAKS = [
+    { id: "win.priority_separation", g: "win", key: "HKLM\\SYSTEM\\CurrentControlSet\\Control\\PriorityControl", p: "Win32PrioritySeparation", d: "2", v: "0x26 (38)",
+      ru: ["Приоритет переднего плана", "Больше квантов CPU активному игровому окну."], en: ["Foreground priority", "More CPU quanta for the active game window."] },
+    { id: "win.gamedvr_policy", g: "win", key: "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR", p: "AllowGameDVR", d: null, v: "0",
+      ru: ["Отключить GameDVR (политика)", "Убирает фоновую запись Xbox Game Bar: меньше нагрузки и подфризов."], en: ["Disable GameDVR (policy)", "Removes Xbox Game Bar background recording: less overhead and fewer stutters."] },
+    { id: "win.gamedvr_user", g: "win", key: "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\GameDVR", p: "GameDVR_Enabled", d: "1", v: "0",
+      ru: ["Отключить GameDVR (пользователь)", "То же самое в профиле пользователя."], en: ["Disable GameDVR (user)", "The same in the user profile."] },
+    { id: "sys.fast_startup_off", g: "win", key: "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power", p: "HiberbootEnabled", d: "1", v: "0",
+      ru: ["Отключить быстрый запуск", "Чистая загрузка Windows, драйверы стартуют заново."], en: ["Disable Fast Startup", "Clean Windows boot, drivers start fresh."] },
+    { id: "sys.mmcss_games_priority", g: "win", key: MM + "\\Tasks\\Games", p: "Priority", d: "2", v: "6",
+      ru: ["Высокий приоритет задач «Games»", "Профиль MMCSS для игр получает высокий приоритет CPU."], en: ["High priority for “Games” tasks", "The MMCSS games profile gets high CPU priority."] },
+    { id: "sys.games_scheduling", g: "win", key: MM + "\\Tasks\\Games", p: "Scheduling Category", d: "Medium", v: "High",
+      ru: ["Категория «Games» = High", "Мультимедиа-задачи игр планируются в первую очередь."], en: ["“Games” category = High", "Game multimedia tasks are scheduled first."] },
+    { id: "win.hw_sched", g: "gpu", key: "HKLM\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers", p: "HwSchMode", d: "1", v: "2", reboot: true,
+      ru: ["Аппаратное планирование GPU (HAGS)", "Эффект зависит от видеокарты и драйвера."], en: ["Hardware-accelerated GPU scheduling", "The effect depends on the GPU and driver."] },
+    { id: "nv.vsync_off", g: "nv", key: NV, p: "VSyncControl", d: null, v: "0",
+      ru: ["V-Sync Off", "Вертикальная синхронизация выключена в профиле драйвера."], en: ["V-Sync Off", "Vertical sync is off in the driver profile."] },
+    { id: "nv.low_latency", g: "nv", key: NV, p: "LowLatencyMode", d: null, v: "1",
+      ru: ["Low Latency Mode", "Меньше кадров в очереди драйвера, ниже задержка."], en: ["Low Latency Mode", "Fewer frames queued in the driver, lower latency."] },
+    { id: "nv.shader_cache", g: "nv", key: NV, p: "OpcodeCaching", d: null, v: "1",
+      ru: ["Кэш шейдеров", "Повторные загрузки шейдеров идут быстрее."], en: ["Shader cache", "Repeated shader loads are faster."] },
+    { id: "nv.powermizer_max", g: "pow", key: NV, p: "PowerMizerEnable", d: null, v: "1",
+      ru: ["NVIDIA: максимальная производительность", "Видеокарта не сбрасывает частоты в игре."], en: ["NVIDIA: prefer max performance", "The GPU doesn't drop clocks while gaming."] },
+    { id: "net.throttling_off", g: "net", key: MM, p: "NetworkThrottlingIndex", d: "10", v: "0xFFFFFFFF",
+      ru: ["Отключить сетевой троттлинг", "Снимает лимит, который Windows ставит сети при воспроизведении медиа."], en: ["Disable network throttling", "Removes the limit Windows puts on the network during media playback."] },
+    { id: "net.system_responsiveness", g: "net", key: MM, p: "SystemResponsiveness", d: "20", v: "0",
+      ru: ["SystemResponsiveness = 0", "Играм достаётся максимум ресурсов планировщика MMCSS."], en: ["SystemResponsiveness = 0", "Games get the maximum MMCSS scheduler resources."] },
+    { id: "mouse.accel_speed", g: "inp", key: "HKCU\\Control Panel\\Mouse", p: "MouseSpeed", d: "1", v: "0",
+      ru: ["Отключить акселерацию мыши", "Курсор двигается ровно 1:1."], en: ["Disable mouse acceleration", "The cursor moves exactly 1:1."] },
+    { id: "mouse.accel_threshold1", g: "inp", key: "HKCU\\Control Panel\\Mouse", p: "MouseThreshold1", d: "6", v: "0",
+      ru: ["Порог акселерации #1", "Выключается вместе с акселерацией."], en: ["Acceleration threshold #1", "Off together with acceleration."] },
+    { id: "mouse.accel_threshold2", g: "inp", key: "HKCU\\Control Panel\\Mouse", p: "MouseThreshold2", d: "10", v: "0",
+      ru: ["Порог акселерации #2", "Выключается вместе с акселерацией."], en: ["Acceleration threshold #2", "Off together with acceleration."] },
+    { id: "mouse.data_queue", g: "inp", key: "HKLM\\SYSTEM\\CurrentControlSet\\Services\\mouclass\\Parameters", p: "MouseDataQueueSize", d: "100", v: "20", reboot: true,
+      ru: ["Очередь данных мыши", "Меньше буферизация ввода."], en: ["Mouse data queue", "Less input buffering."] },
+    { id: "kbd.data_queue", g: "inp", key: "HKLM\\SYSTEM\\CurrentControlSet\\Services\\kbdclass\\Parameters", p: "KeyboardDataQueueSize", d: "100", v: "20", reboot: true,
+      ru: ["Очередь данных клавиатуры", "Меньше буферизация нажатий, ниже инпут-лаг."], en: ["Keyboard data queue", "Less keystroke buffering, lower input lag."] }
+  ];
+
+  const PRESETS = [
+    { id: "competitive", ru: "Киберспорт", en: "Esports", boost: { ru: "Высокий", en: "High" },
+      dru: "Максимум FPS и минимум задержки: V-Sync off, Low Latency, приоритеты, сеть без троттлинга, прямой ввод мыши.",
+      den: "Max FPS and minimum latency: V-Sync off, Low Latency, priorities, unthrottled network, raw mouse input.",
+      t: ["nv.vsync_off", "nv.low_latency", "nv.powermizer_max", "win.priority_separation", "win.gamedvr_user", "win.gamedvr_policy",
+          "net.throttling_off", "net.system_responsiveness", "mouse.accel_speed", "mouse.accel_threshold1", "mouse.accel_threshold2",
+          "mouse.data_queue", "kbd.data_queue", "sys.mmcss_games_priority", "sys.games_scheduling"] },
+    { id: "balanced", ru: "Баланс", en: "Balanced", boost: { ru: "Выше обычного", en: "Above normal" },
+      dru: "Хороший прирост без крайностей. V-Sync и мышь не трогаются.",
+      den: "A solid gain without extremes. V-Sync and the mouse are left alone.",
+      t: ["nv.low_latency", "nv.powermizer_max", "nv.shader_cache", "win.priority_separation", "win.gamedvr_user", "net.throttling_off", "net.system_responsiveness"] },
+    { id: "quality", ru: "Качество", en: "Quality", boost: { ru: "Обычный", en: "Normal" },
+      dru: "Минимальное вмешательство для одиночных игр, где важнее картинка и стабильность.",
+      den: "Minimal changes for single-player games where image and stability matter more.",
+      t: ["nv.powermizer_max", "nv.shader_cache", "win.gamedvr_user"] }
+  ];
+
+  const PROFILES = [
+    ["Counter-Strike 2", "competitive"], ["VALORANT", "competitive"], ["Apex Legends", "competitive"], ["Fortnite", "competitive"],
+    ["PUBG: Battlegrounds", "competitive"], ["Call of Duty (Warzone / MW)", "competitive"], ["Overwatch 2", "competitive"], ["Marvel Rivals", "competitive"],
+    ["Dota 2", "balanced"], ["Deadlock", "balanced"], ["League of Legends", "balanced"], ["Rust", "balanced"],
+    ["Escape from Tarkov", "balanced"], ["GTA V / GTA5RP (RAGE:MP)", "balanced"], ["FiveM (GTA V RP)", "balanced"], ["SA-MP / CRMP (GTA SA)", "balanced"],
+    ["Multi Theft Auto", "balanced"], ["Roblox", "balanced"], ["Cyberpunk 2077", "quality"]
+  ];
+
+  const GAMES = [
+    { id: "cs2", name: "Counter-Strike 2", pub: "Valve · Steam", launch: ["-novid", "-nojoy", "+fps_max 0"],
+      hint: { ru: "Пропуск заставки, отключение опроса джойстика и снятие лимита FPS.", en: "Skips the intro, disables joystick polling and removes the FPS limit." } },
+    { id: "dota2", name: "Dota 2", pub: "Valve · Steam", launch: ["-novid", "-nojoy"], vulkan: true,
+      hint: { ru: "Пропуск заставки и отключение опроса джойстика.", en: "Skips the intro and disables joystick polling." } },
+    { id: "deadlock", name: "Deadlock", pub: "Valve · Steam", launch: ["-novid"], vulkan: true,
+      hint: { ru: "Пропуск заставки.", en: "Skips the intro." } },
+    { id: "apex", name: "Apex Legends", pub: "Respawn · Steam", launch: ["-novid", "+fps_max unlimited"], video: "videoconfig.txt",
+      hint: { ru: "Пропуск заставки и снятие лимита FPS (по умолчанию 144).", en: "Skips the intro and removes the FPS limit (144 by default)." } },
+    { id: "rust", name: "Rust", pub: "Facepunch · Steam", launch: ["-window-mode exclusive"],
+      hint: { ru: "Эксклюзивный полноэкранный режим, меньше задержка вывода кадра.", en: "Exclusive fullscreen, lower frame presentation latency." } },
+    { id: "fortnite", name: "Fortnite", pub: "Epic Games", video: "GameUserSettings.ini", textures: true }
+  ];
+
+  const STRATEGIES = ["general", "general (ALT)", "general (ALT2)", "general (ALT3)", "general (ALT4)", "general (ALT5)",
+    "general (ALT6)", "general (ALT7)", "general (ALT8)", "general (ALT9)", "general (ALT10)", "general (ALT11)",
+    "general (ALT12)", "general (ALT13)", "general (EXP)", "general (FAKE TLS AUTO)", "general (FAKE TLS AUTO ALT)",
+    "general (FAKE TLS AUTO ALT2)", "general (FAKE TLS AUTO ALT3)", "general (SIMPLE FAKE)", "general (SIMPLE FAKE ALT)", "general (SIMPLE FAKE ALT2)"];
+
+  const SYS = [
+    { id: "visual", ru: ["Отключить визуальные эффекты", "Анимации, тени и сглаживание окон: режим «максимальная производительность»."], en: ["Disable visual effects", "Animations, shadows and window smoothing: “best performance” mode."] },
+    { id: "bgapps", ru: ["Отключить фоновые приложения", "Приложения из Store перестают работать в фоне."], en: ["Disable background apps", "Store apps stop running in the background."] },
+    { id: "timer", ru: ["Высокое разрешение таймера (0.5 мс)", "Таймер 0.5 мс вместо 15.6 мс: ровнее кадры с ограничителем FPS. Работает, пока OPEN запущен."], en: ["High timer resolution (0.5 ms)", "0.5 ms timer instead of 15.6 ms: smoother frames with an FPS cap. Works while OPEN runs."] },
+    { id: "netlat", ru: ["Снизить сетевую задержку", "То же, что сетевые твики на вкладке «Оптимизация»."], en: ["Lower network latency", "The same as the network tweaks on the Optimization tab."] },
+    { id: "telemetry", ru: ["Отключить телеметрию Windows", "Службы и задачи сбора данных, включая DiagTrack."], en: ["Disable Windows telemetry", "Data collection services and tasks, including DiagTrack."] },
+    { id: "parking", ru: ["Отключить парковку ядер CPU", "Все ядра всегда активны, без задержки на пробуждение."], en: ["Disable CPU core parking", "All cores stay awake, no wake-up delay."] },
+    { id: "hpet", cmd: true, ru: ["Принудительный таймер HPET", "Системная команда из «Инструментов»."], en: ["Force the HPET timer", "A system command from Tools."] }
+  ];
+
+  const TABS = [
+    { icon: "home", ru: "Главная", en: "Home",
+      dru: "Сводка: сколько твиков включено, есть ли права администратора, найдена ли NVIDIA и запущена ли игра.",
+      den: "The summary: how many tweaks are on, whether OPEN has admin rights, whether NVIDIA is found and a game is running.",
+      lru: ["«Оптимизировать всё» и «Откатить всё»", "Оверлей FPS одной кнопкой"], len: ["“Optimize all” and “Revert all”", "FPS overlay in one click"] },
+    { icon: "bolt", ru: "Оптимизация", en: "Optimization",
+      dru: "18 твиков реестра в шести группах. У каждого видно параметр и значение.",
+      den: "18 registry tweaks in six groups. Each shows its parameter and value.",
+      lru: ["Windows и планировщик, видеокарта, NVIDIA", "Питание, сеть, мышь и клавиатура", "Пометка, если нужна перезагрузка"],
+      len: ["Windows & scheduler, GPU, NVIDIA", "Power, network, mouse & keyboard", "A note when a reboot is needed"] },
+    { icon: "pad", ru: "Пресеты", en: "Presets",
+      dru: "Что применять для каждой игры: Киберспорт, Баланс, Качество или ничего.",
+      den: "What to apply per game: Esports, Balanced, Quality or nothing.",
+      lru: ["19 встроенных игровых профилей", "Свой пресет для каждой игры", "Приоритет процесса и снятие EcoQoS"], len: ["19 built-in game profiles", "A preset per game", "Process priority and EcoQoS removal"] },
+    { icon: "play", ru: "Игры", en: "Games",
+      dru: "Настройки внутри самих игр, с копией файла перед правкой.",
+      den: "Settings inside the games themselves, with a file copy before every change.",
+      lru: ["Опции запуска Steam", "Рендер Vulkan или DX11", "Видеонастройки на минимум и откат", "Текстуры под видеопамять"],
+      len: ["Steam launch options", "Vulkan or DX11 renderer", "Video settings to minimum, with revert", "Textures for your video memory"] },
+    { icon: "chart", ru: "Производительность", en: "Performance",
+      dru: "Мониторинг железа, замеры и история игровых сессий.",
+      den: "Hardware monitoring, benchmarks and game session history.",
+      lru: ["Бенчмарк «до / после» на 15, 30 или 60 секунд", "Анализ узкого места: CPU или GPU", "Сессии за 30 дней, экспорт в CSV"],
+      len: ["Before / after benchmark for 15, 30 or 60 seconds", "Bottleneck analysis: CPU or GPU", "30 days of sessions, CSV export"] },
+    { icon: "wrench", ru: "Инструменты", en: "Tools",
+      dru: "Разовые действия и ручные настройки, которые кнопка «Оптимизировать» не трогает.",
+      den: "One-off actions and manual settings that “Optimize all” never touches.",
+      lru: ["Очистка TEMP, кэша шейдеров и памяти", "Профиль NVIDIA (.nip) с откатом", "Проверка путей для анти-читов RP-серверов", "Приватность, интерфейс, схемы питания, HPET"],
+      len: ["Cleanup of TEMP, shader cache and memory", "NVIDIA profile (.nip) with revert", "Path check for RP server anti-cheats", "Privacy, UI, power plans, HPET"] },
+    { icon: "chip", ru: "Система", en: "System",
+      dru: "Всё, что относится к самой Windows.",
+      den: "Everything about Windows itself.",
+      lru: ["Точка восстановления и частота монитора", "Автозагрузка и DNS с выбором самого быстрого", "Удаление встроенных приложений и очистка", "Таймер 0.5 мс, парковка ядер, телеметрия"],
+      len: ["Restore point and monitor refresh rate", "Startup apps and DNS with fastest pick", "Built-in app removal and cleanup", "0.5 ms timer, core parking, telemetry"] },
+    { icon: "shield", ru: "Запрет", en: "Zapret",
+      dru: "Обход замедления Discord и YouTube. Модуль скачивается отдельно.",
+      den: "Bypasses Discord and YouTube throttling. The module is downloaded separately.",
+      lru: ["22 стратегии и автоподбор", "Автообновление раз в 6 часов", "Пауза для Valorant, LoL, FACEIT, ESEA", "Свой список сайтов"],
+      len: ["22 strategies and auto-pick", "Auto-update every 6 hours", "Pause for Valorant, LoL, FACEIT, ESEA", "Your own site list"] },
+    { icon: "gear", ru: "Настройки", en: "Settings",
+      dru: "Как OPEN ведёт себя вокруг игры и в системе.",
+      den: "How OPEN behaves around games and in the system.",
+      lru: ["Автопилот, boost, усыпление фона, авто-откат", "Оверлей: угол экрана и горячая клавиша", "Автозапуск, доверенный режим, резервная копия", "Язык и обновления"],
+      len: ["Autopilot, boost, background suspend, auto-revert", "Overlay: screen corner and hotkey", "Autostart, trusted mode, backup", "Language and updates"] }
+  ];
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const both = (ru, en) => `<span data-l="ru">${ru}</span><span data-l="en">${en}</span>`;
+  const icon = n => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`;
+
+  // ============== Справочные разделы ==============
+  document.getElementById("tabs-guide").innerHTML = TABS.map((x, i) => `
+    <div class="tab-row">
+      <div class="tab-name">${icon(x.icon)}<div><h3>${both(x.ru, x.en)}</h3><span class="idx">${String(i + 1).padStart(2, "0")} / 09</span></div></div>
+      <p>${both(x.dru, x.den)}</p>
+      <ul>${x.lru.map((r, j) => `<li>${both(r, x.len[j])}</li>`).join("")}</ul>
+    </div>`).join("");
+
+  document.getElementById("preset-cards").innerHTML = PRESETS.map(p => `
+    <div class="preset">
+      <h3>${both(p.ru, p.en)}</h3>
+      <p>${both(p.dru, p.den)}</p>
+      <div class="spec">${both(`${p.t.length} твиков · приоритет CPU: ${p.boost.ru} · EcoQoS выключен`, `${p.t.length} tweaks · CPU priority: ${p.boost.en} · EcoQoS off`)}</div>
+    </div>`).join("");
+
+  const yes = '<span class="yes" role="img" aria-label="✓"></span>', no = '<span class="no" role="img" aria-label="—"></span>';
+  document.getElementById("preset-table").innerHTML = `
+    <thead><tr><th>${both("Твик", "Tweak")}</th>${PRESETS.map(p => `<th class="c">${both(p.ru, p.en)}</th>`).join("")}</tr></thead>
+    <tbody>${TWEAKS.map(x => `<tr><td>${both(esc(x.ru[0]), esc(x.en[0]))}</td>${PRESETS.map(p => `<td class="c">${p.t.includes(x.id) ? yes : no}</td>`).join("")}</tr>`).join("")}</tbody>
+    <tfoot><tr><td>${both("Приоритет процесса игры", "Game process priority")}</td>${PRESETS.map(p => `<td class="c">${both(p.boost.ru, p.boost.en)}</td>`).join("")}</tr></tfoot>`;
+
+  let tweakFilter = "all";
+  function renderTweakTable() {
+    const all = [{ id: "all", ru: "Все", en: "All" }, ...GROUPS];
+    document.getElementById("tweak-filters").innerHTML = all.map(g => {
+      const n = g.id === "all" ? TWEAKS.length : TWEAKS.filter(x => x.g === g.id).length;
+      return `<button type="button" data-filter="${g.id}" aria-pressed="${tweakFilter === g.id}">${both(g.ru, g.en)}<span class="n">${n}</span></button>`;
+    }).join("");
+    const rows = TWEAKS.filter(x => tweakFilter === "all" || x.g === tweakFilter);
+    document.getElementById("tweak-table").innerHTML = `
+      <thead><tr><th>${both("Твик", "Tweak")}</th><th>${both("Параметр и ключ", "Parameter and key")}</th><th>Windows → OPEN</th><th>${both("Группа", "Group")}</th></tr></thead>
+      <tbody>${rows.map(x => {
+        const g = GROUPS.find(y => y.id === x.g);
+        return `<tr>
+          <td style="min-width:220px"><b style="font-weight:600">${both(esc(x.ru[0]), esc(x.en[0]))}</b><div class="hint" style="margin-top:3px">${both(esc(x.ru[1]), esc(x.en[1]))}</div></td>
+          <td style="min-width:260px"><span class="mono">${esc(x.p)}</span><div class="path">${esc(x.key)}</div></td>
+          <td class="mono" style="white-space:nowrap">${x.d == null ? both("нет значения", "not set") : esc(x.d)}<span class="arrow">→</span>${esc(x.v)}${x.reboot ? `<div class="path">${both("нужна перезагрузка", "reboot required")}</div>` : ""}</td>
+          <td style="white-space:nowrap;color:var(--muted)">${both(g.ru, g.en)}</td></tr>`;
+      }).join("")}</tbody>`;
+  }
+  document.getElementById("tweak-filters").addEventListener("click", e => {
+    const b = e.target.closest("[data-filter]"); if (!b) return;
+    tweakFilter = b.dataset.filter; renderTweakTable();
+  });
+  renderTweakTable();
+
+  document.getElementById("game-grid").innerHTML = PROFILES.map(([n, p]) => {
+    const pr = PRESETS.find(x => x.id === p);
+    return `<div><b>${esc(n)}</b><span>${both(pr.ru, pr.en)}</span></div>`;
+  }).join("");
+
+  document.getElementById("ingame-table").innerHTML = `
+    <thead><tr><th>${both("Игра", "Game")}</th><th>${both("Опции запуска Steam", "Steam launch options")}</th><th class="c">Vulkan / DX11</th><th>${both("Видеонастройки", "Video settings")}</th><th class="c">${both("Текстуры", "Textures")}</th></tr></thead>
+    <tbody>${GAMES.map(g => `<tr>
+      <td style="white-space:nowrap"><b style="font-weight:600">${g.name}</b><div class="path">${g.pub}</div></td>
+      <td style="min-width:240px">${g.launch ? `<span class="mono">${esc(g.launch.join(" "))}</span><div class="hint" style="margin-top:3px">${both(g.hint.ru, g.hint.en)}</div>` : no}</td>
+      <td class="c">${g.vulkan ? yes : no}</td>
+      <td>${g.video ? `<span class="mono">${g.video}</span>` : no}</td>
+      <td class="c">${g.textures ? yes : no}</td></tr>`).join("")}</tbody>`;
+
+  // ============== Демо ==============
+  const T = {
+    ru: {
+      menu: "МЕНЮ", ready: "Готов", home: "Главная", opt: "Оптимизация", presets: "Пресеты", games: "Игры", system: "Система", zapret: "Запрет",
+      homeSub: "Оптимизация игр в один клик. Все изменения обратимы.", profile: "Профиль производительности",
+      active: "твиков активно", optAll: "Оптимизировать всё", revAll: "Откатить всё",
+      access: "Доступ", accessV: "Запущено от администратора", gpu: "GPU", gpuV: "NVIDIA найдена, профили драйвера доступны",
+      game: "Игра", noGame: "Игра не запущена", running: "Counter-Strike 2 запущена",
+      startGame: "Запустить CS2", stopGame: "Закрыть игру", gameRow: "Автопилот", gameRowD: "Запустите игру, и OPEN сам применит её пресет.",
+      overlay: "Игровой оверлей", overlayD: "FPS, 1% low, фреймтайм и температуры поверх игры. Горячая клавиша Alt+F11.", showHide: "Показать / скрыть",
+      optSub: "Каждый переключатель сохраняет исходное значение реестра и откатывается точь-в-точь.", onAll: "Включить всё", offAll: "Выключить всё",
+      reboot: "после перезагрузки", noneVal: "нет значения",
+      prSub: "Профиль оптимизации под каждую игру. Применяется автоматически при её запуске.", prOff: "Выключен",
+      prHow: "Как это работает", prHowD: "При старте игры OPEN применяет твики выбранного пресета и повышает приоритет процесса. «Выключен» значит, что для этой игры ничего не делается. Попробуйте поменять пресет CS2 и нажать «Запустить CS2» на главной.",
+      prNow: (name, n, b) => `Для CS2 сейчас: «${name}», ${n} твиков, приоритет: ${b}.`, prNowOff: "Для CS2 сейчас ничего не применяется.",
+      gamesSub: "Настройки внутри самих игр. Перед правкой OPEN сохраняет копию файла.",
+      installed: "Установлена", launchOpts: "Опции запуска Steam", optsOn: "Включить опции", optsOff: "Убрать опции",
+      nowNone: "Сейчас опций запуска нет", now: "Сейчас:", vulkan: "Рендер Vulkan", vulkanD: "Vulkan и DX11 стоит попробовать по очереди.",
+      video: "Видеонастройки игры", videoD: "Тени, сглаживание, эффекты и пост-обработка на минимум. Разрешение и дальность не трогаем.",
+      apply: "Применить", revert: "Откатить", videoOn: "применено, исходные значения сохранены", videoOff: "стоят настройки игры",
+      textures: "Текстуры под видеопамять", texturesD: "Видеопамять: 8 ГБ.", pick: "Подобрать", texturesOn: "Качество текстур: высокое (под 8 ГБ).",
+      sysSub: "Системные твики Windows. Выключение возвращает значение Windows по умолчанию.", sysTw: "Системные твики", sysCmd: "Системные команды",
+      conflict: "HPET замедляет таймер 0.5 мс и сводит его эффект на нет. Выключите таймер или включите доверенный режим.",
+      trusted: "Доверенный режим", trustedD: "Разрешить конфликтующие настройки, только предупреждать.",
+      zSub: "Обход замедления и блокировки Discord и YouTube. Модуль скачивается отдельно по вашей кнопке.",
+      zBefore: "Перед включением",
+      zW1: "Модуль использует сетевой драйвер WinDivert. Антивирусы часто помечают его как RiskTool, это не вирус.",
+      zW2: "Трафик игр не трогается. Пока запущены Valorant, LoL, FACEIT или ESEA, обход на паузе.",
+      zW3: "Модуль не входит в установщик OPEN и скачивается с GitHub.",
+      zOk: "Понятно, продолжить", zNone: "Модуль не установлен", zNoneD: "OPEN скачает последнюю версию сборки с GitHub.",
+      zDl: "Скачать модуль", zFolder: "Указать папку", zDownloading: "Скачиваю zapret 1.10.4…", zUnpack: "Распаковываю…",
+      zTitle: "Обход Discord и YouTube", zOn: "Обход работает", zOff: "Обход выключен", zVer: "Версия 1.10.4",
+      zStrat: "Стратегия", zStratD: "У разных провайдеров работают разные стратегии. Проще всего подобрать автоматически.",
+      zAuto: "Подобрать автоматически", zTest: "Проверить", zChecking: (i, n, s) => `Проверяю стратегию ${i} из ${n}: ${s}…`,
+      zFound: s => `Подходит стратегия ${s}, обход включён.`, zTestOk: "Discord и YouTube открываются.",
+      zTestBad: "Discord или YouTube не открываются. Попробуйте «Подобрать автоматически».",
+      zUpd: "Обновлять модуль автоматически", zUpdD: "Раз в 6 часов OPEN проверяет новую версию и ставит её сам. Ваши списки сайтов сохраняются.",
+      zAc: "Пауза для игр с анти-читом", zAcD: "Valorant, League of Legends, FACEIT, ESEA.",
+      tAuto: "Автопилот", tAutoD: (name, n) => `Counter-Strike 2, пресет «${name}»: применено твиков: ${n}.`, tAutoOff: "Для Counter-Strike 2 пресет выключен, ничего не применено.",
+      tRev: "Твики откачены", tRevD: "Все значения вернулись к тем, что были до OPEN.",
+      tOpt: "Готово", tOptD: n => `Включено твиков: ${n}. Исходные значения сохранены.`,
+      tZ: "Запрет", tZD: "Модуль установлен: версия 1.10.4.",
+      ovlEx: "пример значений", cpu: "CPU", gpuT: "GPU", ft: "фреймтайм", low: "1% low"
+    },
+    en: {
+      menu: "MENU", ready: "Ready", home: "Home", opt: "Optimization", presets: "Presets", games: "Games", system: "System", zapret: "Zapret",
+      homeSub: "One-click game optimization. Every change is reversible.", profile: "Performance profile",
+      active: "tweaks active", optAll: "Optimize all", revAll: "Revert all",
+      access: "Access", accessV: "Running as administrator", gpu: "GPU", gpuV: "NVIDIA found, driver profiles available",
+      game: "Game", noGame: "No game running", running: "Counter-Strike 2 is running",
+      startGame: "Launch CS2", stopGame: "Close game", gameRow: "Autopilot", gameRowD: "Start a game and OPEN applies its preset by itself.",
+      overlay: "Game overlay", overlayD: "FPS, 1% low, frame time and temperatures on top of the game. Hotkey Alt+F11.", showHide: "Show / hide",
+      optSub: "Each toggle saves the original registry value and reverts exactly.", onAll: "Turn all on", offAll: "Turn all off",
+      reboot: "after reboot", noneVal: "not set",
+      prSub: "An optimization profile for each game. Applied automatically when it starts.", prOff: "Off",
+      prHow: "How it works", prHowD: "When a game starts, OPEN applies the chosen preset's tweaks and raises the process priority. “Off” means nothing is done for that game. Try changing the CS2 preset and pressing “Launch CS2” on Home.",
+      prNow: (name, n, b) => `CS2 now: “${name}”, ${n} tweaks, priority: ${b}.`, prNowOff: "Nothing is applied for CS2 right now.",
+      gamesSub: "Settings inside the games themselves. OPEN copies the file before changing it.",
+      installed: "Installed", launchOpts: "Steam launch options", optsOn: "Enable options", optsOff: "Remove options",
+      nowNone: "No launch options right now", now: "Now:", vulkan: "Vulkan renderer", vulkanD: "Try Vulkan and DX11 one after the other.",
+      video: "Game video settings", videoD: "Shadows, anti-aliasing, effects and post-processing to minimum. Resolution and view distance stay.",
+      apply: "Apply", revert: "Revert", videoOn: "applied, original values saved", videoOff: "game settings in place",
+      textures: "Textures for your video memory", texturesD: "Video memory: 8 GB.", pick: "Pick", texturesOn: "Texture quality: high (for 8 GB).",
+      sysSub: "Windows system tweaks. Turning one off restores the Windows default.", sysTw: "System tweaks", sysCmd: "System commands",
+      conflict: "HPET slows down the 0.5 ms timer and cancels its effect. Turn off the timer or enable trusted mode.",
+      trusted: "Trusted mode", trustedD: "Allow conflicting settings, only warn.",
+      zSub: "Bypasses Discord and YouTube throttling and blocking. The module is downloaded separately when you click.",
+      zBefore: "Before you turn it on",
+      zW1: "The module uses the WinDivert network driver. Antivirus software often flags it as RiskTool; it isn't a virus.",
+      zW2: "Game traffic isn't touched. While Valorant, LoL, FACEIT or ESEA is running, the bypass pauses.",
+      zW3: "The module isn't in the OPEN installer and is downloaded from GitHub.",
+      zOk: "Got it, continue", zNone: "Module not installed", zNoneD: "OPEN will download the latest build from GitHub.",
+      zDl: "Download module", zFolder: "Choose folder", zDownloading: "Downloading zapret 1.10.4…", zUnpack: "Extracting…",
+      zTitle: "Discord and YouTube bypass", zOn: "Bypass running", zOff: "Bypass off", zVer: "Version 1.10.4",
+      zStrat: "Strategy", zStratD: "Different providers need different strategies. The easiest way is to pick automatically.",
+      zAuto: "Pick automatically", zTest: "Test", zChecking: (i, n, s) => `Testing strategy ${i} of ${n}: ${s}…`,
+      zFound: s => `Strategy ${s} works, bypass is on.`, zTestOk: "Discord and YouTube open.",
+      zTestBad: "Discord or YouTube don't open. Try “Pick automatically”.",
+      zUpd: "Update the module automatically", zUpdD: "Every 6 hours OPEN checks for a new version and installs it. Your site lists are kept.",
+      zAc: "Pause for anti-cheat games", zAcD: "Valorant, League of Legends, FACEIT, ESEA.",
+      tAuto: "Autopilot", tAutoD: (name, n) => `Counter-Strike 2, “${name}” preset: ${n} tweaks applied.`, tAutoOff: "The Counter-Strike 2 preset is off, nothing applied.",
+      tRev: "Tweaks reverted", tRevD: "Every value is back to what it was before OPEN.",
+      tOpt: "Done", tOptD: n => `${n} tweaks on. Original values saved.`,
+      tZ: "Zapret", tZD: "Module installed: version 1.10.4.",
+      ovlEx: "sample values", cpu: "CPU", gpuT: "GPU", ft: "frame time", low: "1% low"
+    }
+  };
+
+  const S = {
+    lang: "ru", page: "home", on: new Set(), game: false, overlay: false,
+    presets: { "Counter-Strike 2": "competitive", "VALORANT": "competitive", "Dota 2": "balanced", "Rust": "balanced", "GTA V / GTA5RP (RAGE:MP)": "balanced", "Cyberpunk 2077": "quality" },
+    sys: new Set(), trusted: false, sysMsg: "",
+    games: { cs2: { launch: false }, dota2: { launch: false, vk: false }, deadlock: { launch: false, vk: false },
+             apex: { launch: false, video: false }, rust: { launch: false }, fortnite: { video: false, tex: false } },
+    z: { accepted: false, installed: false, on: false, strategy: "general", upd: true, ac: true, busy: false, progress: 0, msg: "" }
+  };
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  const t = k => T[S.lang][k];
+  const sw = (on, action, id, disabled, label) =>
+    `<button type="button" class="switch" role="switch" aria-checked="${on}" aria-label="${esc(label || action)}" data-action="${action}"${id ? ` data-id="${esc(id)}"` : ""}${disabled ? " disabled" : ""}></button>`;
+  const pane = document.getElementById("pane");
+  const nav = document.getElementById("app-nav");
+
+  function renderHome() {
+    return `
+      <h2>${t("home")}</h2><p class="sub">${t("homeSub")}</p>
+      <hr class="rule">
+      <div class="lbl">${t("profile")}</div>
+      <div class="score-row">
+        <div class="score"><span class="big">${S.on.size}</span><span class="of">/ ${TWEAKS.length}</span><span class="cap">${t("active").toUpperCase()}</span></div>
+        <div class="btns">
+          <button type="button" class="btn primary sm" data-action="opt-all">${t("optAll")}</button>
+          <button type="button" class="btn sm" data-action="rev-all">${t("revAll")}</button>
+        </div>
+      </div>
+      <hr class="rule">
+      <div class="stat-grid">
+        <div class="stat"><div class="lbl">${t("access")}</div><p>${t("accessV")}</p></div>
+        <div class="stat"><div class="lbl">${t("gpu")}</div><p>${t("gpuV")}</p></div>
+        <div class="stat${S.game ? " live" : ""}"><div class="lbl">${t("game")}</div><p>${S.game ? t("running") : t("noGame")}</p></div>
+      </div>
+      <hr class="rule">
+      <div class="row-split">
+        <div><h3>${t("gameRow")}</h3><p>${t("gameRowD")}</p></div>
+        <button type="button" class="btn sm" data-action="game">${S.game ? t("stopGame") : t("startGame")}</button>
+      </div>
+      <hr class="rule">
+      <div class="row-split">
+        <div><h3>${t("overlay")}</h3><p>${t("overlayD")}</p></div>
+        <button type="button" class="btn sm" data-action="overlay">${t("showHide")}</button>
+      </div>`;
+  }
+
+  function renderOpt() {
+    let html = `<h2>${t("opt")}</h2><p class="sub">${t("optSub")}</p>
+      <div class="btns" style="margin-top:18px">
+        <button type="button" class="btn primary sm" data-action="opt-all">${t("onAll")}</button>
+        <button type="button" class="btn sm" data-action="rev-all">${t("offAll")}</button>
+      </div>`;
+    for (const g of GROUPS) {
+      const items = TWEAKS.filter(x => x.g === g.id);
+      html += `<div class="group-title"><span class="lbl">${g[S.lang]}</span><span class="count">${items.filter(x => S.on.has(x.id)).length}/${items.length}</span></div>`;
+      for (const x of items) {
+        html += `<div class="tweak"><div class="t">
+            <div class="name">${esc(x[S.lang][0])}${x.reboot ? ` <span class="tag">${t("reboot")}</span>` : ""}</div>
+            <div class="desc">${esc(x[S.lang][1])}</div>
+            <div class="val">${esc(x.p)}: ${x.d == null ? t("noneVal") : esc(x.d)} → ${esc(x.v)}</div>
+          </div>${sw(S.on.has(x.id), "tweak", x.id, false, x[S.lang][0])}</div>`;
+      }
+    }
+    return html;
+  }
+
+  function renderPresets() {
+    const opts = [...PRESETS.map(p => [p.id, p[S.lang]]), ["off", t("prOff")]];
+    const cur = PRESETS.find(p => p.id === S.presets["Counter-Strike 2"]);
+    return `<h2>${t("presets")}</h2><p class="sub">${t("prSub")}</p>
+      <div class="card" style="margin-top:20px;padding-block:6px">
+        ${Object.keys(S.presets).map(n => `<div class="preset-row"><b>${esc(n)}</b><div class="seg" role="group" aria-label="${esc(n)}">
+          ${opts.map(([id, label]) => `<button type="button" data-action="preset" data-id="${esc(n)}" data-val="${id}" aria-pressed="${S.presets[n] === id}">${esc(label)}</button>`).join("")}
+        </div></div>`).join("")}
+      </div>
+      <div class="card"><div class="lbl">${t("prHow")}</div><p class="hint" style="margin-top:8px">${t("prHowD")}</p>
+        <p class="msg">${cur ? t("prNow")(cur[S.lang], cur.t.length, cur.boost[S.lang]) : t("prNowOff")}</p></div>`;
+  }
+
+  function renderGames() {
+    let html = `<h2>${t("games")}</h2><p class="sub">${t("gamesSub")}</p><div class="games">`;
+    for (const g of GAMES) {
+      const st = S.games[g.id];
+      html += `<div class="card"><div class="row-split"><div><h3>${g.name}</h3><div class="pub">${g.pub}</div></div><span class="pill">${t("installed")}</span></div>`;
+      if (g.launch) html += `<div class="sect"><div class="t">
+            <div class="lbl">${t("launchOpts")}</div>
+            <div style="margin-top:8px"><span class="chip">${esc(g.launch.join("  "))}</span></div>
+            <p class="hint">${g.hint[S.lang]}</p>
+            <div class="now">${st.launch ? `${t("now")} ${esc(g.launch.join(" "))}` : t("nowNone")}</div>
+          </div><button type="button" class="btn sm" data-action="launch" data-id="${g.id}">${st.launch ? t("optsOff") : t("optsOn")}</button></div>`;
+      if (g.vulkan) html += `<div class="sect"><div class="t"><h3 style="font-size:.9375rem">${t("vulkan")}</h3><p class="hint">${t("vulkanD")}</p>
+          <div class="now">${st.vk ? "-vulkan" : "DX11"}</div></div>${sw(st.vk, "vk", g.id, false, t("vulkan"))}</div>`;
+      if (g.video) html += `<div class="sect"><div class="t"><div class="lbl">${t("video")}</div><p class="hint">${t("videoD")}</p>
+          <div class="now">${g.video}: ${st.video ? t("videoOn") : t("videoOff")}</div></div>
+          ${st.video ? `<button type="button" class="btn sm" data-action="video" data-id="${g.id}">${t("revert")}</button>`
+            : `<button type="button" class="btn primary sm" data-action="video" data-id="${g.id}">${t("apply")}</button>`}</div>`;
+      if (g.textures) html += `<div class="sect"><div class="t"><h3 style="font-size:.9375rem">${t("textures")}</h3>
+          <p class="hint">${st.tex ? t("texturesOn") : t("texturesD")}</p></div>
+          <button type="button" class="btn sm" data-action="tex" data-id="${g.id}">${t("pick")}</button></div>`;
+      html += `</div>`;
+    }
+    return html + `</div>`;
+  }
+
+  function renderSystem() {
+    const row = x => `<div class="tweak"><div class="t">
+        <div class="name">${esc(x[S.lang][0])}</div><div class="desc">${esc(x[S.lang][1])}</div>
+        ${(x.id === "hpet" || x.id === "timer") && S.sysMsg && S.sysFor === x.id ? `<div class="warn">${esc(S.sysMsg)}</div>` : ""}
+      </div>${sw(S.sys.has(x.id), "sys", x.id, false, x[S.lang][0])}</div>`;
+    return `<h2>${t("system")}</h2><p class="sub">${t("sysSub")}</p>
+      <div class="group-title"><span class="lbl">${t("sysTw")}</span></div>
+      ${SYS.filter(x => !x.cmd).map(row).join("")}
+      <div class="group-title"><span class="lbl">${t("sysCmd")}</span></div>
+      ${SYS.filter(x => x.cmd).map(row).join("")}
+      <div class="tweak"><div class="t"><div class="name">${t("trusted")}</div><div class="desc">${t("trustedD")}</div></div>${sw(S.trusted, "trusted", null, false, t("trusted"))}</div>`;
+  }
+
+  function renderZapret() {
+    const z = S.z;
+    let html = `<h2>${t("zapret")}</h2><p class="sub">${t("zSub")}</p>`;
+    if (!z.accepted) return html + `<div class="card" style="margin-top:22px">
+        <div class="lbl">${t("zBefore")}</div>
+        <ul class="warn-list"><li>${t("zW1")}</li><li>${t("zW2")}</li><li>${t("zW3")}</li></ul>
+        <div class="btns" style="margin-top:16px"><button type="button" class="btn primary sm" data-action="z-accept">${t("zOk")}</button></div></div>`;
+    if (!z.installed) return html + `<div class="card" style="margin-top:22px">
+        <h3>${t("zNone")}</h3><p class="hint">${t("zNoneD")}</p>
+        <div class="btns" style="margin-top:14px">
+          <button type="button" class="btn primary sm" data-action="z-dl"${z.busy ? " disabled" : ""}>${t("zDl")}</button>
+          <button type="button" class="btn sm" disabled>${t("zFolder")}</button>
+        </div>
+        ${z.busy ? `<div class="progress"><i style="width:${z.progress}%"></i></div><div class="msg">${esc(z.msg)}</div>` : ""}</div>`;
+    const opts = STRATEGIES.map(s => `<option${s === z.strategy ? " selected" : ""}>${esc(s)}</option>`).join("");
+    return html + `
+      <div class="card" style="margin-top:22px">
+        <div class="row-split">
+          <div><h3>${t("zTitle")}</h3><div class="msg" style="margin-top:4px">${z.on ? `${t("zOn")} · ${esc(z.strategy)}` : t("zOff")}</div><div class="pub">${t("zVer")}</div></div>
+          ${sw(z.on, "z-toggle", null, z.busy, t("zTitle"))}
+        </div>
+        <div class="lbl" style="margin-top:18px">${t("zStrat")}</div>
+        <p class="hint">${t("zStratD")}</p>
+        <div class="btns" style="margin-top:10px;align-items:center">
+          <select class="select" id="z-strat" aria-label="${t("zStrat")}"${z.busy ? " disabled" : ""}>${opts}</select>
+          <button type="button" class="btn primary sm" data-action="z-auto"${z.busy ? " disabled" : ""}>${t("zAuto")}</button>
+          <button type="button" class="btn sm" data-action="z-test"${z.busy ? " disabled" : ""}>${t("zTest")}</button>
+        </div>
+        ${z.msg ? `<div class="msg">${esc(z.msg)}</div>` : ""}
+      </div>
+      <div class="card">
+        <div class="row-split"><div style="flex:1;min-width:0"><h3 style="font-size:.9375rem">${t("zUpd")}</h3><p>${t("zUpdD")}</p></div>${sw(z.upd, "z-upd", null, false, t("zUpd"))}</div>
+        <div class="row-split" style="margin-top:16px"><div style="flex:1;min-width:0"><h3 style="font-size:.9375rem">${t("zAc")}</h3><p>${t("zAcD")}</p></div>${sw(z.ac, "z-ac", null, false, t("zAc"))}</div>
+      </div>`;
+  }
+
+  const PAGES = { home: renderHome, opt: renderOpt, presets: renderPresets, games: renderGames, system: renderSystem, zapret: renderZapret };
+  const NAV = [["home", "home"], ["opt", "bolt"], ["presets", "pad"], ["games", "play"], ["system", "chip"], ["zapret", "shield"]];
+
+  function render(keepScroll) {
+    const y = pane.scrollTop;
+    nav.innerHTML = NAV.map(([id, ic]) => `<button type="button" class="nav-btn" data-page="${id}"${S.page === id ? ' aria-current="page"' : ""}>${icon(ic)}${t(id)}</button>`).join("");
+    document.getElementById("t-menu").textContent = t("menu");
+    document.getElementById("app-status").textContent = S.game ? t("running") : t("ready");
+    pane.innerHTML = PAGES[S.page]();
+    if (keepScroll) pane.scrollTop = y;
+    renderOverlay();
+  }
+
+  const toastEl = document.getElementById("toast");
+  let toastTimer;
+  function toast(title, text) {
+    toastEl.querySelector("strong").textContent = title;
+    toastEl.querySelector("span").textContent = text;
+    toastEl.hidden = false;
+    toastEl.style.animation = "none"; void toastEl.offsetWidth; toastEl.style.animation = "";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3800);
+  }
+
+  const ovl = document.getElementById("ovl");
+  let fps = 238, frame = 0;
+  function renderOverlay() {
+    ovl.hidden = !S.overlay;
+    if (!S.overlay) return;
+    ovl.innerHTML = `<div><span class="fps">${Math.round(fps)}</span> <span class="k">FPS</span></div>
+      <dl><dt class="k">${t("low")}</dt><dd>${Math.round(fps * 0.71)}</dd>
+      <dt class="k">${t("ft")}</dt><dd>${(1000 / fps).toFixed(1)} ms</dd>
+      <dt class="k">${t("cpu")}</dt><dd>${61 + (frame % 3)}°C</dd>
+      <dt class="k">${t("gpuT")}</dt><dd>${67 + (frame % 2)}°C</dd></dl>
+      <div class="ex">${t("ovlEx")}</div>`;
+  }
+  setInterval(() => {
+    if (!S.overlay) return;
+    frame++;
+    fps = Math.max(205, Math.min(268, fps + (Math.random() - 0.5) * 14));
+    renderOverlay();
+  }, 500);
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  async function zDownload() {
+    const z = S.z; z.busy = true; z.progress = 0; z.msg = t("zDownloading"); render(true);
+    for (let p = 0; p <= 100; p += 10) { z.progress = p; if (p === 80) z.msg = t("zUnpack"); render(true); await wait(140); }
+    z.busy = false; z.installed = true; z.msg = ""; render(true);
+    toast(t("tZ"), t("tZD"));
+  }
+  async function zAuto() {
+    const z = S.z; z.busy = true; z.on = false;
+    const target = 2;
+    for (let i = 0; i <= target; i++) { z.msg = t("zChecking")(i + 1, STRATEGIES.length, STRATEGIES[i]); render(true); await wait(900); }
+    z.strategy = STRATEGIES[target]; z.on = true; z.busy = false; z.msg = t("zFound")(z.strategy); render(true);
+  }
+  async function zTest() {
+    const z = S.z; z.busy = true; z.msg = "…"; render(true);
+    await wait(900);
+    z.busy = false; z.msg = z.on ? t("zTestOk") : t("zTestBad"); render(true);
+  }
+
+  const app = document.getElementById("app");
+  app.addEventListener("click", e => {
+    const navBtn = e.target.closest("[data-page]");
+    if (navBtn) { S.page = navBtn.dataset.page; pane.scrollTop = 0; render(); return; }
+    const el = e.target.closest("[data-action]");
+    if (!el || el.disabled) return;
+    const id = el.dataset.id;
+    switch (el.dataset.action) {
+      case "tweak": S.on.has(id) ? S.on.delete(id) : S.on.add(id); break;
+      case "opt-all": TWEAKS.forEach(x => S.on.add(x.id)); toast(t("tOpt"), t("tOptD")(TWEAKS.length)); break;
+      case "rev-all": S.on.clear(); toast(t("tRev"), t("tRevD")); break;
+      case "game": {
+        S.game = !S.game;
+        if (S.game) {
+          const p = PRESETS.find(x => x.id === S.presets["Counter-Strike 2"]);
+          if (p) { p.t.forEach(x => S.on.add(x)); toast(t("tAuto"), t("tAutoD")(p[S.lang], p.t.length)); }
+          else toast(t("tAuto"), t("tAutoOff"));
+          S.overlay = true;
+        } else S.overlay = false;
+        break;
+      }
+      case "overlay": S.overlay = !S.overlay; break;
+      case "preset": S.presets[id] = el.dataset.val; break;
+      case "sys": {
+        const turningOn = !S.sys.has(id);
+        const other = id === "hpet" ? "timer" : id === "timer" ? "hpet" : null;
+        if (turningOn && other && S.sys.has(other) && !S.trusted) { S.sysMsg = t("conflict"); S.sysFor = id; break; }
+        S.sysMsg = ""; turningOn ? S.sys.add(id) : S.sys.delete(id); break;
+      }
+      case "trusted": S.trusted = !S.trusted; S.sysMsg = ""; break;
+      case "launch": S.games[id].launch = !S.games[id].launch; break;
+      case "vk": S.games[id].vk = !S.games[id].vk; break;
+      case "video": S.games[id].video = !S.games[id].video; break;
+      case "tex": S.games[id].tex = true; break;
+      case "z-accept": S.z.accepted = true; break;
+      case "z-dl": zDownload(); return;
+      case "z-auto": zAuto(); return;
+      case "z-test": zTest(); return;
+      case "z-toggle": S.z.on = !S.z.on; S.z.msg = ""; break;
+      case "z-upd": S.z.upd = !S.z.upd; break;
+      case "z-ac": S.z.ac = !S.z.ac; break;
+      default: return;
+    }
+    render(true);
+  });
+  app.addEventListener("change", e => {
+    if (e.target.id === "z-strat") { S.z.strategy = e.target.value; S.z.msg = ""; render(true); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.altKey && e.key === "F11") { e.preventDefault(); S.overlay = !S.overlay; renderOverlay(); }
+  });
+
+  // ============== Язык ==============
+  function setLang(lang) {
+    S.lang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    store.set("open-lang", lang);
+    render(true);
+  }
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+  const saved = store.get("open-lang");
+  setLang(saved || ((navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en"));
+})();
+</script>
+</body>
+</html>
