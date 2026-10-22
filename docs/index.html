@@ -39,7 +39,7 @@
   --step-1: 1.1875rem;
   --step-2: 1.5rem;
   --step-3: clamp(1.9rem, 4.2vw, 3rem);
-  --step-4: clamp(2.4rem, 7vw, 5.2rem);
+  --step-4: clamp(2.1rem, 6.4vw, 4.8rem);
 
   --radius: 12px;
   --wrap: 1180px;
@@ -108,10 +108,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* ---------- первый экран ---------- */
 .hero { padding-block: 72px 36px; }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 48px; align-items: end; margin-top: 32px; }
+.hero-actions:first-child { margin-top: 0; }
 .eyebrow { font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; gap: 10px; align-items: center; }
 .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
-h1 { font: 800 var(--step-4)/1.02 var(--font-display); letter-spacing: -0.02em; margin: 18px 0 0; text-wrap: balance; }
+h1 { font: 800 var(--step-4)/1.04 var(--font-display); letter-spacing: -0.02em; margin: 18px 0 0; max-width: 16ch; text-wrap: balance; overflow-wrap: break-word; hyphens: manual; }
 h1 .faint { color: var(--dim); }
 .lede { color: var(--muted); font-size: var(--step-1); line-height: 1.55; max-width: 34em; margin: 0; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
@@ -318,6 +319,15 @@ tfoot td { color: var(--muted); background: var(--bg-top); font-size: 0.8125rem;
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq details p { color: var(--muted); margin: -6px 0 22px; max-width: 48em; }
 
+.reviews { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 40px; }
+.reviews-aside { display: grid; gap: 18px; align-content: start; }
+.reviews-aside p { color: var(--muted); margin: 0; font-size: 0.9375rem; }
+.reviews-aside ol { margin: 0; padding: 0; list-style: none; counter-reset: r; display: grid; gap: 10px; font-size: 0.9375rem; }
+.reviews-aside li { counter-increment: r; display: grid; grid-template-columns: 28px minmax(0, 1fr); color: var(--muted); }
+.reviews-aside li::before { content: counter(r, decimal-leading-zero); font: 500 0.8125rem var(--font-mono); color: var(--dim); padding-top: 2px; }
+.reviews-box { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); padding: 22px; min-height: 260px; min-width: 0; }
+.reviews-wait { color: var(--dim); font-size: var(--step--1); }
+@media (max-width: 960px) { .reviews { grid-template-columns: minmax(0, 1fr); gap: 24px; } .reviews-box { padding: 14px; } }
 .cta { margin-top: 100px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding-block: 56px; display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap; }
 .cta h2 { font: 700 var(--step-3)/1.1 var(--font-display); margin: 0; max-width: 14em; text-wrap: balance; }
 footer { padding-block: 28px 44px; color: var(--dim); font-size: 0.8125rem; display: flex; justify-content: space-between; gap: 12px 28px; flex-wrap: wrap; }
@@ -383,6 +393,7 @@ footer a { color: var(--muted); }
       <a href="#tweaks"><span data-l="ru">Твики</span><span data-l="en">Tweaks</span></a>
       <a href="#games"><span data-l="ru">Игры</span><span data-l="en">Games</span></a>
       <a href="#install"><span data-l="ru">Установка</span><span data-l="en">Install</span></a>
+      <a href="#reviews"><span data-l="ru">Отзывы</span><span data-l="en">Reviews</span></a>
       <a href="#faq"><span data-l="ru">Вопросы</span><span data-l="en">FAQ</span></a>
     </nav>
     <div class="lang" role="group" aria-label="Language">
@@ -397,14 +408,14 @@ footer a { color: var(--muted); }
   <!-- ===================== Первый экран ===================== -->
   <section class="hero">
     <div class="wrap">
+      <div class="eyebrow"><span data-l="ru">Версия 0.7.4 · Windows 10 / 11</span><span data-l="en">Version 0.7.4 · Windows 10 / 11</span></div>
+      <h1><span data-l="ru">Windows, настроенная <span class="faint">под&nbsp;игры</span></span><span data-l="en">Windows, tuned <span class="faint">for&nbsp;games</span></span></h1>
       <div class="hero-grid">
-        <div>
-          <div class="eyebrow"><span data-l="ru">Версия 0.7.4 · Windows 10 / 11</span><span data-l="en">Version 0.7.4 · Windows 10 / 11</span></div>
-          <h1><span data-l="ru">Windows,<br>настроенная <span class="faint">под&nbsp;игры</span></span><span data-l="en">Windows,<br>tuned <span class="faint">for&nbsp;games</span></span></h1>
-        </div>
         <div>
           <p class="lede" data-l="ru">OPEN включает проверенные твики Windows, NVIDIA, сети и ввода, сам применяет профиль при запуске игры, настраивает игры изнутри и показывает FPS поверх игры. Каждый твик откатывается к прежнему значению.</p>
           <p class="lede" data-l="en">OPEN turns on proven Windows, NVIDIA, network and input tweaks, applies a profile when a game starts, sets up games from the inside and shows FPS on top of the game. Every tweak reverts to its previous value.</p>
+        </div>
+        <div>
           <div class="hero-actions">
             <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN 0.7.4</span><span data-l="en">Download OPEN 0.7.4</span></a>
             <a class="btn" href="#demo"><span data-l="ru">Попробовать в браузере</span><span data-l="en">Try it in the browser</span></a>
@@ -564,6 +575,33 @@ footer a { color: var(--muted); }
             <p data-l="ru">Несовместимые настройки, например HPET и таймер 0.5 мс, нельзя включить вместе. Попробуйте в демо на вкладке «Система». Снять запрет можно доверенным режимом.</p>
             <p data-l="en">Settings that cancel each other out, like HPET and the 0.5 ms timer, can't be on together. Try it on the System tab of the demo. Trusted mode lifts this.</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Отзывы ===================== -->
+  <section class="block" id="reviews">
+    <div class="wrap">
+      <div class="block-head">
+        <div>
+          <div class="eyebrow"><span data-l="ru">Отзывы</span><span data-l="en">Reviews</span></div>
+          <h2><span data-l="ru">Что говорят игроки</span><span data-l="en">What players say</span></h2>
+        </div>
+        <p data-l="ru">Отзывы пишут сами пользователи OPEN через свой аккаунт GitHub. Мы их не редактируем и не придумываем.</p>
+        <p data-l="en">Reviews are written by OPEN users through their own GitHub accounts. We don't edit or make them up.</p>
+      </div>
+      <div class="reviews">
+        <div class="reviews-aside">
+          <ol>
+            <li><span data-l="ru">Нажмите «Войти через GitHub» в форме.</span><span data-l="en">Click “Sign in with GitHub” in the form.</span></li>
+            <li><span data-l="ru">Напишите, какая у вас игра и железо, и что изменилось после OPEN.</span><span data-l="en">Say which game and hardware you have and what changed after OPEN.</span></li>
+            <li><span data-l="ru">Ставьте реакции отзывам, с которыми согласны.</span><span data-l="en">React to reviews you agree with.</span></li>
+          </ol>
+          <p><span data-l="ru">Нашли ошибку? Лучше напишите в</span><span data-l="en">Found a bug? Report it in</span> <a href="https://github.com/pirogovv-collab/OPEN/issues" target="_blank" rel="noopener">Issues</a>.</p>
+        </div>
+        <div class="reviews-box" id="reviews-box">
+          <p class="reviews-wait"><span data-l="ru">Отзывы загружаются…</span><span data-l="en">Loading reviews…</span></p>
         </div>
       </div>
     </div>
@@ -1328,12 +1366,51 @@ footer a { color: var(--muted); }
     if (e.altKey && e.key === "F11") { e.preventDefault(); S.overlay = !S.overlay; renderOverlay(); }
   });
 
+  // ============== Отзывы (Giscus: GitHub Discussions) ==============
+  // Значения берутся на giscus.app после включения Discussions и установки приложения giscus.
+  const GISCUS = {
+    repo: "pirogovv-collab/OPEN",
+    repoId: "R_kgDOVB_hwg",
+    category: "Отзовы",
+    categoryId: "DIC_kwDOVB_hws4DJT9A"
+  };
+  let giscusLoaded = false;
+  function loadReviews(lang) {
+    const box = document.getElementById("reviews-box");
+    if (!GISCUS.repoId || !GISCUS.categoryId) return;
+    if (giscusLoaded) {
+      const frame = document.querySelector("iframe.giscus-frame");
+      if (frame) frame.contentWindow.postMessage({ giscus: { setConfig: { lang } } }, "https://giscus.app");
+      return;
+    }
+    giscusLoaded = true;
+    const sc = document.createElement("script");
+    sc.src = "https://giscus.app/client.js";
+    sc.async = true;
+    sc.crossOrigin = "anonymous";
+    Object.entries({
+      "data-repo": GISCUS.repo, "data-repo-id": GISCUS.repoId,
+      "data-category": GISCUS.category, "data-category-id": GISCUS.categoryId,
+      "data-mapping": "specific", "data-term": "Отзывы об OPEN", "data-strict": "0",
+      "data-reactions-enabled": "1", "data-emit-metadata": "0", "data-input-position": "top",
+      "data-theme": "transparent_dark", "data-lang": lang, "data-loading": "lazy"
+    }).forEach(([k, v]) => sc.setAttribute(k, v));
+    sc.onload = () => { const w = box.querySelector(".reviews-wait"); if (w) w.remove(); };
+    box.appendChild(sc);
+    setTimeout(() => {
+      if (box.querySelector("iframe")) return;
+      const w = box.querySelector(".reviews-wait");
+      if (w) w.innerHTML = '<span data-l="ru">Форма отзывов не загрузилась. Отзывы можно прочитать и оставить </span><span data-l="en">The review form didn\'t load. You can read and leave reviews </span><a href="https://github.com/pirogovv-collab/OPEN/discussions" target="_blank" rel="noopener"><span data-l="ru">на GitHub</span><span data-l="en">on GitHub</span></a>.';
+    }, 10000);
+  }
+
   // ============== Язык ==============
   function setLang(lang) {
     S.lang = lang;
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
     store.set("open-lang", lang);
+    loadReviews(lang);
     render(true);
   }
   document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
