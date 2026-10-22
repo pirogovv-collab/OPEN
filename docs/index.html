@@ -310,6 +310,9 @@ tfoot td { color: var(--muted); background: var(--bg-top); font-size: 0.8125rem;
 .versions ul { margin: -4px 0 24px 130px; padding: 0; list-style: none; display: grid; gap: 10px; max-width: 52em; }
 .versions li { color: var(--muted); font-size: 0.9375rem; }
 .versions li b { color: var(--text); font-weight: 600; }
+.versions .rel-body { white-space: pre-line; color: var(--muted); font-size: 0.9375rem; margin: -4px 0 12px 130px; max-width: 52em; overflow-wrap: anywhere; }
+.versions .rel-link { margin: 0 0 24px 130px; font-size: 0.875rem; }
+@media (max-width: 760px) { .versions .rel-body, .versions .rel-link { margin-left: 0; } }
 
 .faq { border-top: 1px solid var(--border); }
 .faq details { border-bottom: 1px solid var(--border); }
@@ -319,15 +322,40 @@ tfoot td { color: var(--muted); background: var(--bg-top); font-size: 0.8125rem;
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq details p { color: var(--muted); margin: -6px 0 22px; max-width: 48em; }
 
-.reviews { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 40px; }
-.reviews-aside { display: grid; gap: 18px; align-content: start; }
-.reviews-aside p { color: var(--muted); margin: 0; font-size: 0.9375rem; }
-.reviews-aside ol { margin: 0; padding: 0; list-style: none; counter-reset: r; display: grid; gap: 10px; font-size: 0.9375rem; }
-.reviews-aside li { counter-increment: r; display: grid; grid-template-columns: 28px minmax(0, 1fr); color: var(--muted); }
-.reviews-aside li::before { content: counter(r, decimal-leading-zero); font: 500 0.8125rem var(--font-mono); color: var(--dim); padding-top: 2px; }
-.reviews-box { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); padding: 22px; min-height: 260px; min-width: 0; }
-.reviews-wait { color: var(--dim); font-size: var(--step--1); }
-@media (max-width: 960px) { .reviews { grid-template-columns: minmax(0, 1fr); gap: 24px; } .reviews-box { padding: 14px; } }
+.reviews { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 40px; align-items: start; }
+.rv-form { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); padding: 22px; display: grid; gap: 14px; }
+.rv-form h3 { font: 600 var(--step-1) var(--font-body); margin: 0; }
+.rv-form label { display: grid; gap: 6px; font-size: 0.8125rem; color: var(--muted); }
+.rv-form input[type=text], .rv-form textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; font: 400 0.9375rem/1.5 var(--font-body); }
+.rv-form textarea { min-height: 120px; resize: vertical; }
+.rv-form input:focus, .rv-form textarea:focus { outline: none; border-color: var(--muted); }
+.rv-count { font: 400 0.75rem var(--font-mono); color: var(--dim); text-align: right; }
+.rv-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.stars-pick { display: flex; gap: 4px; border: 0; padding: 0; margin: 0; }
+.stars-pick legend { font-size: 0.8125rem; color: var(--muted); margin-bottom: 6px; padding: 0; }
+.stars-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.stars-pick label { cursor: pointer; font-size: 1.6rem; line-height: 1; color: var(--border); transition: color .12s; }
+.stars-pick label.on { color: var(--accent); }
+.stars-pick input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.rv-note { font-size: 0.8125rem; color: var(--dim); margin: 0; }
+.rv-status { font-size: 0.875rem; color: var(--accent); margin: 0; min-height: 1.4em; }
+.rv-summary { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.rv-summary b { font: 700 var(--step-3)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.rv-summary span { color: var(--muted); font-size: 0.9375rem; }
+.stars { color: var(--accent); letter-spacing: 2px; font-size: 1rem; }
+.stars i { font-style: normal; color: var(--border); }
+.rv-list { display: grid; }
+.rv-item { padding: 18px 0; border-bottom: 1px solid var(--border); min-width: 0; }
+.rv-item header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rv-item strong { font-weight: 600; }
+.rv-item time { font: 400 0.75rem var(--font-mono); color: var(--dim); }
+.rv-item p { margin: 8px 0 0; color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; }
+.rv-empty { color: var(--muted); padding: 24px 0; }
+.rv-more { margin-top: 16px; }
+.rv-github { margin-top: 26px; font-size: 0.875rem; color: var(--dim); }
+.rv-github button { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font: inherit; }
+.giscus-wrap { margin-top: 16px; }
+@media (max-width: 960px) { .reviews { grid-template-columns: minmax(0, 1fr); gap: 28px; } .rv-form { padding: 18px; } }
 .cta { margin-top: 100px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding-block: 56px; display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap; }
 .cta h2 { font: 700 var(--step-3)/1.1 var(--font-display); margin: 0; max-width: 14em; text-wrap: balance; }
 footer { padding-block: 28px 44px; color: var(--dim); font-size: 0.8125rem; display: flex; justify-content: space-between; gap: 12px 28px; flex-wrap: wrap; }
@@ -400,7 +428,7 @@ footer a { color: var(--muted); }
       <button type="button" data-lang="ru" aria-pressed="true">RU</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
-    <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать</span><span data-l="en">Download</span></a>
+    <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать</span><span data-l="en">Download</span></a>
   </div>
 </header>
 
@@ -408,7 +436,7 @@ footer a { color: var(--muted); }
   <!-- ===================== Первый экран ===================== -->
   <section class="hero">
     <div class="wrap">
-      <div class="eyebrow"><span data-l="ru">Версия 0.7.4 · Windows 10 / 11</span><span data-l="en">Version 0.7.4 · Windows 10 / 11</span></div>
+      <div class="eyebrow"><span data-l="ru">Версия <span class="js-ver">0.7.5</span> · Windows 10 / 11</span><span data-l="en">Version <span class="js-ver">0.7.5</span> · Windows 10 / 11</span></div>
       <h1><span data-l="ru">Windows, настроенная <span class="faint">под&nbsp;игры</span></span><span data-l="en">Windows, tuned <span class="faint">for&nbsp;games</span></span></h1>
       <div class="hero-grid">
         <div>
@@ -417,7 +445,7 @@ footer a { color: var(--muted); }
         </div>
         <div>
           <div class="hero-actions">
-            <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN 0.7.4</span><span data-l="en">Download OPEN 0.7.4</span></a>
+            <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN <span class="js-ver">0.7.5</span></span><span data-l="en">Download OPEN <span class="js-ver">0.7.5</span></span></a>
             <a class="btn" href="#demo"><span data-l="ru">Попробовать в браузере</span><span data-l="en">Try it in the browser</span></a>
           </div>
           <div class="hero-meta"><span data-l="ru">x64 · установщик для Windows · нужны права администратора</span><span data-l="en">x64 · Windows installer · requires administrator rights</span></div>
@@ -427,7 +455,7 @@ footer a { color: var(--muted); }
         <div><b>18</b><span data-l="ru">твиков реестра в 6 группах</span><span data-l="en">registry tweaks in 6 groups</span></div>
         <div><b>3</b><span data-l="ru">пресета: Киберспорт, Баланс, Качество</span><span data-l="en">presets: Esports, Balanced, Quality</span></div>
         <div><b>19</b><span data-l="ru">игр узнаёт автопилот</span><span data-l="en">games the autopilot recognizes</span></div>
-        <div><b>6</b><span data-l="ru">игр с настройками внутри игры</span><span data-l="en">games with in-game settings</span></div>
+        <div><b>7</b><span data-l="ru">игр с настройками внутри игры</span><span data-l="en">games with in-game settings</span></div>
         <div><b>0/67</b><span data-l="ru">на VirusTotal (версия 0.7.3)</span><span data-l="en">on VirusTotal (version 0.7.3)</span></div>
       </div>
     </div>
@@ -470,7 +498,7 @@ footer a { color: var(--muted); }
       <div class="block-head">
         <div>
           <div class="eyebrow"><span data-l="ru">Возможности</span><span data-l="en">Features</span></div>
-          <h2><span data-l="ru">Девять вкладок, и что в каждой</span><span data-l="en">Nine tabs and what's in each</span></h2>
+          <h2><span data-l="ru">Десять вкладок, и что в каждой</span><span data-l="en">Ten tabs and what's in each</span></h2>
         </div>
         <p data-l="ru">OPEN не делает ничего скрытого. У каждой настройки написано, какой параметр она меняет и на какое значение, а исходное значение сохраняется до правки.</p>
         <p data-l="en">OPEN does nothing hidden. Each setting says which parameter it changes and to what value, and the original value is saved before the change.</p>
@@ -525,7 +553,7 @@ footer a { color: var(--muted); }
       </div>
       <div class="game-grid" id="game-grid"></div>
       <div class="table-wrap"><table id="ingame-table"></table></div>
-      <p class="note"><span data-l="ru">Опции запуска меняются при закрытом Steam, видеонастройки при закрытой игре: при выходе они перезаписывают свои файлы. Перед каждой правкой OPEN сохраняет копию файла.</span><span data-l="en">Launch options are changed while Steam is closed, video settings while the game is closed, because on exit they overwrite their files. OPEN copies the file before every change.</span></p>
+      <p class="note"><span data-l="ru">«Редактор» — кнопка «Настройки игры»: все параметры из файла игры с понятными названиями, любое значение вручную и откат к исходному файлу. Опции запуска меняются при закрытом Steam, видеонастройки при закрытой игре: при выходе они перезаписывают свои файлы. Перед каждой правкой OPEN сохраняет копию файла.</span><span data-l="en">“Editor” is the “Game settings” button: every setting from the game file with clear names, any value by hand and a restore to the original file. Launch options are changed while Steam is closed, video settings while the game is closed, because on exit they overwrite their files. OPEN copies the file before every change.</span></p>
     </div>
   </section>
 
@@ -588,20 +616,36 @@ footer a { color: var(--muted); }
           <div class="eyebrow"><span data-l="ru">Отзывы</span><span data-l="en">Reviews</span></div>
           <h2><span data-l="ru">Что говорят игроки</span><span data-l="en">What players say</span></h2>
         </div>
-        <p data-l="ru">Отзывы пишут сами пользователи OPEN через свой аккаунт GitHub. Мы их не редактируем и не придумываем.</p>
-        <p data-l="en">Reviews are written by OPEN users through their own GitHub accounts. We don't edit or make them up.</p>
+        <p data-l="ru">Отзывы пишут сами пользователи OPEN, регистрация не нужна. Мы их не редактируем и не придумываем, а только убираем спам и оскорбления.</p>
+        <p data-l="en">Reviews are written by OPEN users, no sign-up needed. We don't edit or make them up; we only remove spam and abuse.</p>
       </div>
       <div class="reviews">
-        <div class="reviews-aside">
-          <ol>
-            <li><span data-l="ru">Нажмите «Войти через GitHub» в форме.</span><span data-l="en">Click “Sign in with GitHub” in the form.</span></li>
-            <li><span data-l="ru">Напишите, какая у вас игра и железо, и что изменилось после OPEN.</span><span data-l="en">Say which game and hardware you have and what changed after OPEN.</span></li>
-            <li><span data-l="ru">Ставьте реакции отзывам, с которыми согласны.</span><span data-l="en">React to reviews you agree with.</span></li>
-          </ol>
-          <p><span data-l="ru">Нашли ошибку? Лучше напишите в</span><span data-l="en">Found a bug? Report it in</span> <a href="https://github.com/pirogovv-collab/OPEN/issues" target="_blank" rel="noopener">Issues</a>.</p>
-        </div>
-        <div class="reviews-box" id="reviews-box">
-          <p class="reviews-wait"><span data-l="ru">Отзывы загружаются…</span><span data-l="en">Loading reviews…</span></p>
+        <form class="rv-form" id="rv-form" novalidate>
+          <h3><span data-l="ru">Оставить отзыв</span><span data-l="en">Leave a review</span></h3>
+          <label for="rv-name"><span><span data-l="ru">Имя или ник</span><span data-l="en">Name or nickname</span></span>
+            <input type="text" id="rv-name" name="name" maxlength="40" autocomplete="nickname" required>
+          </label>
+          <fieldset class="stars-pick" id="rv-stars">
+            <legend><span data-l="ru">Оценка</span><span data-l="en">Rating</span></legend>
+          </fieldset>
+          <label for="rv-text"><span><span data-l="ru">Отзыв: игра, железо и что изменилось</span><span data-l="en">Review: game, hardware and what changed</span></span>
+            <textarea id="rv-text" name="text" maxlength="1000" required></textarea>
+            <span class="rv-count" id="rv-count">0 / 1000</span>
+          </label>
+          <label class="rv-hp" aria-hidden="true">Website <input type="text" id="rv-website" name="website" tabindex="-1" autocomplete="off"></label>
+          <button class="btn primary" type="submit" id="rv-submit"><span data-l="ru">Отправить</span><span data-l="en">Send</span></button>
+          <p class="rv-status" id="rv-status" role="status" aria-live="polite"></p>
+          <p class="rv-note"><span data-l="ru">Регистрация не нужна. Отзыв появится на сайте после проверки, обычно в течение дня. Ошибки лучше писать в</span><span data-l="en">No sign-up needed. Your review appears after a quick check, usually within a day. Report bugs in</span> <a href="https://github.com/pirogovv-collab/OPEN/issues" target="_blank" rel="noopener">Issues</a>.</p>
+        </form>
+        <div>
+          <div class="rv-summary" id="rv-summary"></div>
+          <div class="rv-list" id="rv-list"><p class="rv-empty"><span data-l="ru">Загружаю отзывы…</span><span data-l="en">Loading reviews…</span></p></div>
+          <button class="btn sm rv-more" id="rv-more" type="button" hidden><span data-l="ru">Показать ещё</span><span data-l="en">Show more</span></button>
+          <div class="rv-github">
+            <span data-l="ru">Есть аккаунт GitHub? Можно обсудить OPEN и там:</span><span data-l="en">Have a GitHub account? You can discuss OPEN there too:</span>
+            <button type="button" id="rv-giscus-btn"><span data-l="ru">открыть обсуждение</span><span data-l="en">open the discussion</span></button>
+            <div class="giscus-wrap" id="reviews-box"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -621,7 +665,7 @@ footer a { color: var(--muted); }
       <div class="install">
         <ol class="steps">
           <li><div><h3><span data-l="ru">Скачайте установщик</span><span data-l="en">Download the installer</span></h3>
-            <p data-l="ru">Файл OPEN-Setup-0.7.4.exe лежит на странице релизов GitHub.</p><p data-l="en">OPEN-Setup-0.7.4.exe is on the GitHub releases page.</p></div></li>
+            <p data-l="ru">Файл OPEN-Setup-<span class="js-ver">0.7.5</span>.exe лежит на странице релизов GitHub.</p><p data-l="en">OPEN-Setup-<span class="js-ver">0.7.5</span>.exe is on the GitHub releases page.</p></div></li>
           <li><div><h3><span data-l="ru">Запустите и разрешите права администратора</span><span data-l="en">Run it and allow administrator rights</span></h3>
             <p data-l="ru">Без них OPEN не сможет менять системный раздел реестра и считать кадры. Если SmartScreen покажет предупреждение, нажмите «Подробнее» и «Выполнить в любом случае».</p>
             <p data-l="en">OPEN needs them to change the system part of the registry and count frames. If SmartScreen shows a warning, click "More info" and "Run anyway".</p></div></li>
@@ -657,8 +701,23 @@ footer a { color: var(--muted); }
         <p data-l="ru">При первом запуске новой версии твики сбрасываются к настройкам Windows, затем OPEN предлагает авто-настройку. DNS, удалённые приложения, автозагрузка и профиль NVIDIA при этом не трогаются.</p>
         <p data-l="en">On the first launch of a new version tweaks reset to Windows defaults, then OPEN offers auto-setup. DNS, removed apps, startup items and the NVIDIA profile aren't touched.</p>
       </div>
-      <div class="versions">
-        <details open>
+      <div class="versions" id="versions-list">
+        <details open data-ver="0.7.5">
+          <summary><b>0.7.5</b><span><span data-l="ru">Вкладка «Сеть», редактор настроек игр, серверы и пинг</span><span data-l="en">Network tab, game settings editor, servers and ping</span></span></summary>
+          <ul data-l="ru">
+            <li><b>Сеть.</b> Запись сети во время игры: пинг до роутера, интернета и сервера игры, трафик по программам. Тест нагрузки канала, отчёт и профиль сетевых настроек с откатом.</li>
+            <li><b>Редактор настроек игр.</b> У CS2, Apex, Fortnite и GTA V RP кнопка «Настройки игры»: любой параметр вручную, копия файла и откат.</li>
+            <li><b>Серверы и пинг.</b> Подсказки по регионам для стран СНГ и Азии, пинг до серверов Valve с вашего ПК, лимит пинга поиска в CS2.</li>
+            <li><b>GTA V RP.</b> Видеонастройки для Majestic RP, GTA5RP и обычной GTA V.</li>
+          </ul>
+          <ul data-l="en">
+            <li><b>Network.</b> Network recording while gaming: ping to the router, internet and game server, per-app traffic. A load test, a report and a network settings profile with revert.</li>
+            <li><b>Game settings editor.</b> CS2, Apex, Fortnite and GTA V RP get a “Game settings” button: any value by hand, a file backup and revert.</li>
+            <li><b>Servers and ping.</b> Region tips for CIS and Asian countries, ping to Valve servers from your PC, a matchmaking ping cap in CS2.</li>
+            <li><b>GTA V RP.</b> Video settings for Majestic RP, GTA5RP and regular GTA V.</li>
+          </ul>
+        </details>
+        <details data-ver="0.7.4">
           <summary><b>0.7.4</b><span><span data-l="ru">Вкладка «Запрет»</span><span data-l="en">Zapret tab</span></span></summary>
           <ul data-l="ru">
             <li><b>Запрет.</b> Обход замедления Discord и YouTube на сборке zapret-discord-youtube от Flowseal. Модуль скачивается по кнопке и не входит в установщик.</li>
@@ -673,7 +732,7 @@ footer a { color: var(--muted); }
             <li><b>Anti-cheat pause.</b> While Valorant, League of Legends, FACEIT or ESEA is running, the bypass is off and the driver unloaded.</li>
           </ul>
         </details>
-        <details>
+        <details data-ver="0.7.3">
           <summary><b>0.7.3</b><span><span data-l="ru">Вкладка «Игры», автопилот, чистый VirusTotal</span><span data-l="en">Games tab, autopilot, clean VirusTotal</span></span></summary>
           <ul data-l="ru">
             <li><b>Игры.</b> Опции запуска Steam, переключатель Vulkan / DX11, видеонастройки Apex и Fortnite на минимум с откатом, текстуры Fortnite под видеопамять.</li>
@@ -686,7 +745,7 @@ footer a { color: var(--muted); }
             <li><b>Antivirus.</b> Removed the WinRing0 driver in favor of PawnIO. Memory cleanup now runs inside OPEN and finally works correctly.</li>
           </ul>
         </details>
-        <details>
+        <details data-ver="0.7.2">
           <summary><b>0.7.2</b><span><span data-l="ru">Английский интерфейс, проверка конфликтов</span><span data-l="en">English interface, conflict checks</span></span></summary>
           <ul data-l="ru">
             <li><b>Английский язык.</b> Весь интерфейс на русском и английском, окно «Что нового» после обновления.</li>
@@ -701,7 +760,7 @@ footer a { color: var(--muted); }
             <li><b>Trusted mode</b> for advanced users and dark dialogs instead of standard Windows ones.</li>
           </ul>
         </details>
-        <details>
+        <details data-ver="0.7.1">
           <summary><b>0.7.1</b><span><span data-l="ru">Бенчмарк, узкое место, отчёты сессий</span><span data-l="en">Benchmark, bottleneck, session reports</span></span></summary>
           <ul data-l="ru">
             <li><b>Бенчмарк «до / после»</b> со средним FPS, 1% и 0.1% low и разницей в процентах.</li>
@@ -716,7 +775,7 @@ footer a { color: var(--muted); }
             <li><b>Background suspend</b> while gaming and auto-revert after exit. The 0.5 ms timer is restored on every launch.</li>
           </ul>
         </details>
-        <details>
+        <details data-ver="0.7.0">
           <summary><b>0.7.0</b><span><span data-l="ru">Вкладка «Система»</span><span data-l="en">System tab</span></span></summary>
           <ul data-l="ru">
             <li><b>Система.</b> Автозагрузка, DNS с автовыбором самого быстрого, удаление встроенных приложений, системные твики, частота монитора, точка восстановления, очистка.</li>
@@ -760,6 +819,9 @@ footer a { color: var(--muted); }
         <details><summary><span data-l="ru">Оверлей не показывает FPS</span><span data-l="en">The overlay shows no FPS</span></summary>
           <p data-l="ru">OPEN считает кадры по событиям DXGI. Игры, которые выводят кадры в обход DXGI (часть игр на OpenGL и Vulkan), могут не отображаться. Ещё проверьте, что OPEN запущен от администратора.</p>
           <p data-l="en">OPEN counts frames from DXGI events. Games that present frames without DXGI (some OpenGL and Vulkan games) may not show up. Also check that OPEN runs as administrator.</p></details>
+        <details><summary><span data-l="ru">Как OPEN подбирает сетевые настройки?</span><span data-l="en">How does OPEN pick network settings?</span></summary>
+          <p data-l="ru">На вкладке «Сеть» OPEN записывает пинг и трафик во время игры и делает тест нагрузки канала. По этому отчёту пишется профиль под конкретное подключение. OPEN показывает каждое изменение, применяет только то, что может надёжно вернуть, и откатывает всё одной кнопкой.</p>
+          <p data-l="en">On the Network tab OPEN records ping and traffic while you play and runs a connection load test. A profile for that specific connection is written from the report. OPEN shows every change, applies only what it can reliably revert, and undoes everything with one button.</p></details>
         <details><summary><span data-l="ru">Можно выключить автообновление?</span><span data-l="en">Can I turn off auto-update?</span></summary>
           <p data-l="ru">Да, в «Настройках» в разделе «Обновления». Проверить вручную можно там же.</p>
           <p data-l="en">Yes, in Settings under Updates. You can also check manually there.</p></details>
@@ -770,7 +832,7 @@ footer a { color: var(--muted); }
 
       <div class="cta">
         <h2><span data-l="ru">Поставьте OPEN и сравните FPS до и после</span><span data-l="en">Install OPEN and compare FPS before and after</span></h2>
-        <a class="btn primary" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN 0.7.4</span><span data-l="en">Download OPEN 0.7.4</span></a>
+        <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN <span class="js-ver">0.7.5</span></span><span data-l="en">Download OPEN <span class="js-ver">0.7.5</span></span></a>
       </div>
       <footer>
         <span>OPEN · 2026</span>
@@ -783,7 +845,7 @@ footer a { color: var(--muted); }
 
 <script>
 (() => {
-  // ============== Данные (взяты из кода OPEN 0.7.4) ==============
+  // ============== Данные (взяты из кода OPEN 0.7.5) ==============
   const ICONS = {
     home: "M12 3L3 11h3v9h4v-6h4v6h4v-9h3z",
     bolt: "M13 2L4 14h7l-1 8 10-13h-7z",
@@ -793,6 +855,7 @@ footer a { color: var(--muted); }
     wrench: "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z",
     chip: "M6 6h12v12H6z M9 2h1.4v3H9z M13.6 2H15v3h-1.4z M9 19h1.4v3H9z M13.6 19H15v3h-1.4z M2 9h3v1.4H2z M2 13.6h3V15H2z M19 9h3v1.4h-3z M19 13.6h3V15h-3z",
     shield: "M12 2 4 5v6c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4z",
+    wifi: "M12 3c-4 0-7.6 1.6-10.2 4.2l1.8 1.8C5.7 6.9 8.7 5.5 12 5.5s6.3 1.4 8.4 3.5l1.8-1.8C19.6 4.6 16 3 12 3zm0 5c-2.6 0-5 1-6.7 2.8l1.8 1.8c1.3-1.3 3-2.1 4.9-2.1s3.6.8 4.9 2.1l1.8-1.8C17 9 14.6 8 12 8zm0 5c-1.2 0-2.3.5-3.2 1.3L12 17.5l3.2-3.2c-.9-.8-2-1.3-3.2-1.3zM11 18h2v3h-2z",
     gear: "M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.3 7.3 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.5.5 0 0 0-.61.22L2.74 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.42.34.61.22l2.39-.96c.49.38 1.03.7 1.62.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.19.12.47.02.61-.22l1.92-3.32a.5.5 0 0 0-.12-.64zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"
   };
 
@@ -871,17 +934,18 @@ footer a { color: var(--muted); }
   ];
 
   const GAMES = [
-    { id: "cs2", name: "Counter-Strike 2", pub: "Valve · Steam", launch: ["-novid", "-nojoy", "+fps_max 0"],
+    { id: "cs2", name: "Counter-Strike 2", pub: "Valve · Steam", launch: ["-novid", "-nojoy", "+fps_max 0"], editor: "cs2_video.txt",
       hint: { ru: "Пропуск заставки, отключение опроса джойстика и снятие лимита FPS.", en: "Skips the intro, disables joystick polling and removes the FPS limit." } },
     { id: "dota2", name: "Dota 2", pub: "Valve · Steam", launch: ["-novid", "-nojoy"], vulkan: true,
       hint: { ru: "Пропуск заставки и отключение опроса джойстика.", en: "Skips the intro and disables joystick polling." } },
     { id: "deadlock", name: "Deadlock", pub: "Valve · Steam", launch: ["-novid"], vulkan: true,
       hint: { ru: "Пропуск заставки.", en: "Skips the intro." } },
-    { id: "apex", name: "Apex Legends", pub: "Respawn · Steam", launch: ["-novid", "+fps_max unlimited"], video: "videoconfig.txt",
+    { id: "apex", name: "Apex Legends", pub: "Respawn · Steam", launch: ["-novid", "+fps_max unlimited"], video: "videoconfig.txt", editor: "videoconfig.txt",
       hint: { ru: "Пропуск заставки и снятие лимита FPS (по умолчанию 144).", en: "Skips the intro and removes the FPS limit (144 by default)." } },
     { id: "rust", name: "Rust", pub: "Facepunch · Steam", launch: ["-window-mode exclusive"],
       hint: { ru: "Эксклюзивный полноэкранный режим, меньше задержка вывода кадра.", en: "Exclusive fullscreen, lower frame presentation latency." } },
-    { id: "fortnite", name: "Fortnite", pub: "Epic Games", video: "GameUserSettings.ini", textures: true }
+    { id: "fortnite", name: "Fortnite", pub: "Epic Games", video: "GameUserSettings.ini", textures: true, editor: "GameUserSettings.ini" },
+    { id: "gtarp", name: "GTA V RP", pub: "Majestic RP · GTA5RP · RAGE MP", video: "settings.xml", editor: "settings.xml" }
   ];
 
   const STRATEGIES = ["general", "general (ALT)", "general (ALT2)", "general (ALT3)", "general (ALT4)", "general (ALT5)",
@@ -916,8 +980,8 @@ footer a { color: var(--muted); }
     { icon: "play", ru: "Игры", en: "Games",
       dru: "Настройки внутри самих игр, с копией файла перед правкой.",
       den: "Settings inside the games themselves, with a file copy before every change.",
-      lru: ["Опции запуска Steam", "Рендер Vulkan или DX11", "Видеонастройки на минимум и откат", "Текстуры под видеопамять"],
-      len: ["Steam launch options", "Vulkan or DX11 renderer", "Video settings to minimum, with revert", "Textures for your video memory"] },
+      lru: ["Редактор настроек: любой параметр вручную, например тени 0", "Видеонастройки на минимум, включая GTA V RP (Majestic, GTA5RP)", "Опции запуска Steam и рендер Vulkan / DX11", "Серверы и пинг: регионы для СНГ и Азии, лимит пинга в CS2"],
+      len: ["Settings editor: any value by hand, e.g. shadows 0", "Video settings to minimum, including GTA V RP (Majestic, GTA5RP)", "Steam launch options and Vulkan / DX11 renderer", "Servers and ping: regions for CIS and Asia, ping cap in CS2"] },
     { icon: "chart", ru: "Производительность", en: "Performance",
       dru: "Мониторинг железа, замеры и история игровых сессий.",
       den: "Hardware monitoring, benchmarks and game session history.",
@@ -938,6 +1002,11 @@ footer a { color: var(--muted); }
       den: "Bypasses Discord and YouTube throttling. The module is downloaded separately.",
       lru: ["22 стратегии и автоподбор", "Автообновление раз в 6 часов", "Пауза для Valorant, LoL, FACEIT, ESEA", "Свой список сайтов"],
       len: ["22 strategies and auto-pick", "Auto-update every 6 hours", "Pause for Valorant, LoL, FACEIT, ESEA", "Your own site list"] },
+    { icon: "wifi", ru: "Сеть", en: "Network",
+      dru: "Запись сети во время игры, отчёт и профиль настроек под ваше подключение.",
+      den: "Network recording while gaming, a report and a settings profile for your connection.",
+      lru: ["Пинг до роутера, интернета и сервера игры", "Какие программы качают во время игры", "Тест нагрузки канала на 15 секунд", "Профиль настроек с предпросмотром и откатом"],
+      len: ["Ping to the router, internet and game server", "Which apps download while you play", "15-second connection load test", "Settings profile with preview and revert"] },
     { icon: "gear", ru: "Настройки", en: "Settings",
       dru: "Как OPEN ведёт себя вокруг игры и в системе.",
       den: "How OPEN behaves around games and in the system.",
@@ -952,7 +1021,7 @@ footer a { color: var(--muted); }
   // ============== Справочные разделы ==============
   document.getElementById("tabs-guide").innerHTML = TABS.map((x, i) => `
     <div class="tab-row">
-      <div class="tab-name">${icon(x.icon)}<div><h3>${both(x.ru, x.en)}</h3><span class="idx">${String(i + 1).padStart(2, "0")} / 09</span></div></div>
+      <div class="tab-name">${icon(x.icon)}<div><h3>${both(x.ru, x.en)}</h3><span class="idx">${String(i + 1).padStart(2, "0")} / ${String(TABS.length).padStart(2, "0")}</span></div></div>
       <p>${both(x.dru, x.den)}</p>
       <ul>${x.lru.map((r, j) => `<li>${both(r, x.len[j])}</li>`).join("")}</ul>
     </div>`).join("");
@@ -1001,13 +1070,14 @@ footer a { color: var(--muted); }
   }).join("");
 
   document.getElementById("ingame-table").innerHTML = `
-    <thead><tr><th>${both("Игра", "Game")}</th><th>${both("Опции запуска Steam", "Steam launch options")}</th><th class="c">Vulkan / DX11</th><th>${both("Видеонастройки", "Video settings")}</th><th class="c">${both("Текстуры", "Textures")}</th></tr></thead>
+    <thead><tr><th>${both("Игра", "Game")}</th><th>${both("Опции запуска Steam", "Steam launch options")}</th><th class="c">Vulkan / DX11</th><th>${both("Видеонастройки", "Video settings")}</th><th class="c">${both("Текстуры", "Textures")}</th><th class="c">${both("Редактор", "Editor")}</th></tr></thead>
     <tbody>${GAMES.map(g => `<tr>
       <td style="white-space:nowrap"><b style="font-weight:600">${g.name}</b><div class="path">${g.pub}</div></td>
       <td style="min-width:240px">${g.launch ? `<span class="mono">${esc(g.launch.join(" "))}</span><div class="hint" style="margin-top:3px">${both(g.hint.ru, g.hint.en)}</div>` : no}</td>
       <td class="c">${g.vulkan ? yes : no}</td>
       <td>${g.video ? `<span class="mono">${g.video}</span>` : no}</td>
-      <td class="c">${g.textures ? yes : no}</td></tr>`).join("")}</tbody>`;
+      <td class="c">${g.textures ? yes : no}</td>
+      <td class="c">${g.editor ? yes : no}</td></tr>`).join("")}</tbody>`;
 
   // ============== Демо ==============
   const T = {
@@ -1051,7 +1121,20 @@ footer a { color: var(--muted); }
       tRev: "Твики откачены", tRevD: "Все значения вернулись к тем, что были до OPEN.",
       tOpt: "Готово", tOptD: n => `Включено твиков: ${n}. Исходные значения сохранены.`,
       tZ: "Запрет", tZD: "Модуль установлен: версия 1.10.4.",
-      ovlEx: "пример значений", cpu: "CPU", gpuT: "GPU", ft: "фреймтайм", low: "1% low"
+      ovlEx: "пример значений", cpu: "CPU", gpuT: "GPU", ft: "фреймтайм", low: "1% low",
+      network: "Сеть", editor: "Настройки игры", tEditor: "Редактор настроек",
+      tEditorD: g => `В приложении откроется редактор ${g}: все параметры с понятными названиями, любое значение вручную, откат к исходному файлу.`,
+      netSub: "Запишите сеть во время игры и сохраните отчёт. По нему пишется профиль настроек под ваше подключение.",
+      netConn: "Подключение", netConnV: "Кабель · Realtek PCIe GbE · 1000 Мбит/с (пример)",
+      netRec: "1. Записать игровую сессию", netStart: "Записать сессию", netStop: "Остановить запись",
+      netGw: "Роутер", netInet: "Интернет", netSrv: "Сервер игры", netWho: "Кто качает",
+      netNow: (ms, avg, j) => `${ms} мс сейчас · средн. ${avg} · джиттер ${j}`,
+      netIdle: "запись не идёт",
+      netTest: "2. Тест канала и отчёт", netTestBtn: "Тест нагрузки (15 с)", netSave: "Сохранить отчёт",
+      netTestRun: "Нагружаю канал: скачивание…",
+      netTestRes: "Оценка A. Пинг в покое 21 мс, под нагрузкой 38 мс. Скорость скачивания 94.6 Мбит/с. (пример)",
+      tReport: "Отчёт сохранён", tReportD: "В приложении файл появится на рабочем столе. В демо ничего не сохраняется.",
+      netProf: "3. Применить профиль настроек", netProfD: "OPEN покажет каждое изменение и текущее значение, применит и сможет всё вернуть."
     },
     en: {
       menu: "MENU", ready: "Ready", home: "Home", opt: "Optimization", presets: "Presets", games: "Games", system: "System", zapret: "Zapret",
@@ -1093,7 +1176,20 @@ footer a { color: var(--muted); }
       tRev: "Tweaks reverted", tRevD: "Every value is back to what it was before OPEN.",
       tOpt: "Done", tOptD: n => `${n} tweaks on. Original values saved.`,
       tZ: "Zapret", tZD: "Module installed: version 1.10.4.",
-      ovlEx: "sample values", cpu: "CPU", gpuT: "GPU", ft: "frame time", low: "1% low"
+      ovlEx: "sample values", cpu: "CPU", gpuT: "GPU", ft: "frame time", low: "1% low",
+      network: "Network", editor: "Game settings", tEditor: "Settings editor",
+      tEditorD: g => `The app opens the ${g} editor: every setting with clear names, any value by hand, restore to the original file.`,
+      netSub: "Record your network while gaming and save the report. A settings profile for your connection is written from it.",
+      netConn: "Connection", netConnV: "Cable · Realtek PCIe GbE · 1000 Mbps (sample)",
+      netRec: "1. Record a game session", netStart: "Record session", netStop: "Stop recording",
+      netGw: "Router", netInet: "Internet", netSrv: "Game server", netWho: "Who's downloading",
+      netNow: (ms, avg, j) => `${ms} ms now · avg ${avg} · jitter ${j}`,
+      netIdle: "not recording",
+      netTest: "2. Test the connection and save the report", netTestBtn: "Load test (15 s)", netSave: "Save report",
+      netTestRun: "Loading the connection: download…",
+      netTestRes: "Grade A. Idle ping 21 ms, under load 38 ms. Download speed 94.6 Mbps. (sample)",
+      tReport: "Report saved", tReportD: "In the app the file appears on your desktop. Nothing is saved in the demo.",
+      netProf: "3. Apply a settings profile", netProfD: "OPEN shows every change and the current value, applies it and can put everything back."
     }
   };
 
@@ -1102,7 +1198,8 @@ footer a { color: var(--muted); }
     presets: { "Counter-Strike 2": "competitive", "VALORANT": "competitive", "Dota 2": "balanced", "Rust": "balanced", "GTA V / GTA5RP (RAGE:MP)": "balanced", "Cyberpunk 2077": "quality" },
     sys: new Set(), trusted: false, sysMsg: "",
     games: { cs2: { launch: false }, dota2: { launch: false, vk: false }, deadlock: { launch: false, vk: false },
-             apex: { launch: false, video: false }, rust: { launch: false }, fortnite: { video: false, tex: false } },
+             apex: { launch: false, video: false }, rust: { launch: false }, fortnite: { video: false, tex: false }, gtarp: { video: false } },
+    net: { rec: false, sec: 0, gw: 2, inet: 31, srv: 48, test: "", busy: false },
     z: { accepted: false, installed: false, on: false, strategy: "general", upd: true, ac: true, busy: false, progress: 0, msg: "" }
   };
   const store = {
@@ -1182,7 +1279,7 @@ footer a { color: var(--muted); }
     let html = `<h2>${t("games")}</h2><p class="sub">${t("gamesSub")}</p><div class="games">`;
     for (const g of GAMES) {
       const st = S.games[g.id];
-      html += `<div class="card"><div class="row-split"><div><h3>${g.name}</h3><div class="pub">${g.pub}</div></div><span class="pill">${t("installed")}</span></div>`;
+      html += `<div class="card"><div class="row-split"><div><h3>${g.name}</h3><div class="pub">${g.pub}</div></div><div class="btns" style="align-items:center">${g.editor ? `<button type="button" class="btn sm" data-action="editor" data-id="${g.id}">${t("editor")}</button>` : ""}<span class="pill">${t("installed")}</span></div></div>`;
       if (g.launch) html += `<div class="sect"><div class="t">
             <div class="lbl">${t("launchOpts")}</div>
             <div style="margin-top:8px"><span class="chip">${esc(g.launch.join("  "))}</span></div>
@@ -1252,8 +1349,34 @@ footer a { color: var(--muted); }
       </div>`;
   }
 
-  const PAGES = { home: renderHome, opt: renderOpt, presets: renderPresets, games: renderGames, system: renderSystem, zapret: renderZapret };
-  const NAV = [["home", "home"], ["opt", "bolt"], ["presets", "pad"], ["games", "play"], ["system", "chip"], ["zapret", "shield"]];
+  function renderNetwork() {
+    const n = S.net;
+    const line = (label, base) => `<div class="row-split" style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <span class="lbl" style="min-width:110px">${label}</span>
+        <span style="font:400 .8125rem var(--font-mono);color:var(--muted)">${n.rec ? t("netNow")(base, base + (base > 5 ? 2 : 0), (base > 5 ? 1.4 : 0.3).toFixed(1)) : t("netIdle")}</span></div>`;
+    return `<h2>${t("network")}</h2><p class="sub">${t("netSub")}</p>
+      <div class="card" style="margin-top:20px"><div class="lbl">${t("netConn")}</div><p class="hint" style="margin-top:6px">${t("netConnV")}</p></div>
+      <div class="card">
+        <div class="row-split"><h3>${t("netRec")}</h3>
+          <div class="btns" style="align-items:center"><span class="now">${n.rec ? String(Math.floor(n.sec / 60)).padStart(2, "0") + ":" + String(n.sec % 60).padStart(2, "0") : ""}</span>
+          <button type="button" class="btn ${n.rec ? "" : "primary "}sm" data-action="net-rec">${n.rec ? t("netStop") : t("netStart")}</button></div></div>
+        <div style="margin-top:12px">${line(t("netGw"), n.gw)}${line(t("netInet"), n.inet)}${line(t("netSrv"), n.srv)}</div>
+        ${n.rec ? `<div class="lbl" style="margin-top:14px">${t("netWho")}</div>
+          <div class="now" style="margin-top:6px;line-height:1.7">cs2: ↓ ${(n.sec * 0.09).toFixed(1)} MB  ↑ ${(n.sec * 0.05).toFixed(1)} MB<br>steam: ↓ ${(n.sec * 0.6).toFixed(1)} MB  ↑ 0.1 MB<br>discord: ↓ ${(n.sec * 0.02).toFixed(1)} MB  ↑ ${(n.sec * 0.03).toFixed(1)} MB</div>` : ""}
+      </div>
+      <div class="card">
+        <h3>${t("netTest")}</h3>
+        ${n.test ? `<div class="msg">${esc(n.test)}</div>` : ""}
+        <div class="btns" style="margin-top:12px">
+          <button type="button" class="btn sm" data-action="net-test"${n.busy ? " disabled" : ""}>${t("netTestBtn")}</button>
+          <button type="button" class="btn primary sm" data-action="net-save">${t("netSave")}</button>
+        </div>
+      </div>
+      <div class="card"><h3>${t("netProf")}</h3><p class="hint">${t("netProfD")}</p></div>`;
+  }
+
+  const PAGES = { home: renderHome, opt: renderOpt, presets: renderPresets, games: renderGames, system: renderSystem, zapret: renderZapret, network: renderNetwork };
+  const NAV = [["home", "home"], ["opt", "bolt"], ["presets", "pad"], ["games", "play"], ["system", "chip"], ["zapret", "shield"], ["network", "wifi"]];
 
   function render(keepScroll) {
     const y = pane.scrollTop;
@@ -1288,6 +1411,14 @@ footer a { color: var(--muted); }
       <dt class="k">${t("gpuT")}</dt><dd>${67 + (frame % 2)}°C</dd></dl>
       <div class="ex">${t("ovlEx")}</div>`;
   }
+  setInterval(() => {
+    if (!S.net.rec) return;
+    S.net.sec++;
+    S.net.gw = 1 + Math.round(Math.random() * 2);
+    S.net.inet = 28 + Math.round(Math.random() * 7);
+    S.net.srv = 44 + Math.round(Math.random() * 9);
+    if (S.page === "network") render(true);
+  }, 1000);
   setInterval(() => {
     if (!S.overlay) return;
     frame++;
@@ -1355,6 +1486,13 @@ footer a { color: var(--muted); }
       case "z-toggle": S.z.on = !S.z.on; S.z.msg = ""; break;
       case "z-upd": S.z.upd = !S.z.upd; break;
       case "z-ac": S.z.ac = !S.z.ac; break;
+      case "editor": { const g = GAMES.find(x => x.id === id); toast(t("tEditor"), t("tEditorD")(g ? g.editor : "")); return; }
+      case "net-rec": S.net.rec = !S.net.rec; if (S.net.rec) S.net.sec = 0; break;
+      case "net-test":
+        S.net.busy = true; S.net.test = t("netTestRun"); render(true);
+        setTimeout(() => { S.net.busy = false; S.net.test = t("netTestRes"); render(true); }, 2200);
+        return;
+      case "net-save": toast(t("tReport"), t("tReportD")); return;
       default: return;
     }
     render(true);
@@ -1366,18 +1504,105 @@ footer a { color: var(--muted); }
     if (e.altKey && e.key === "F11") { e.preventDefault(); S.overlay = !S.overlay; renderOverlay(); }
   });
 
-  // ============== Отзывы (Giscus: GitHub Discussions) ==============
-  // Значения берутся на giscus.app после включения Discussions и установки приложения giscus.
-  const GISCUS = {
-    repo: "pirogovv-collab/OPEN",
-    repoId: "R_kgDOVB_hwg",
-    category: "Отзовы",
-    categoryId: "DIC_kwDOVB_hws4DJT9A"
+  // ============== Отзывы без регистрации (Supabase) ==============
+  // URL проекта и публичный ключ (anon / publishable) из Supabase → Project Settings → API.
+  // Ключ публичный по задумке: доступ ограничен правилами RLS в базе (читать можно только одобренные отзывы,
+  // добавлять только неодобренные, и только поля name / rating / text / lang).
+  const SB = { url: "https://ewubscvbpbotqjkxkrig.supabase.co", key: "sb_publishable_6f97163UK832Nck5GT-zKg_WpETo-id" };
+  const sbHeaders = () => {
+    const h = { apikey: SB.key, "Content-Type": "application/json" };
+    if (!SB.key.startsWith("sb_")) h.Authorization = "Bearer " + SB.key;
+    return h;
   };
+  const RV = { all: [], shown: 6, rating: 0 };
+  const starsHtml = n => `<span class="stars" aria-label="${n} / 5">${"★".repeat(n)}<i>${"★".repeat(5 - n)}</i></span>`;
+  const fmtDate = iso => { try { return new Date(iso).toLocaleDateString(S.lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } };
+
+  function renderReviews() {
+    const list = document.getElementById("rv-list"), sum = document.getElementById("rv-summary"), more = document.getElementById("rv-more");
+    if (!RV.all.length) {
+      sum.innerHTML = "";
+      list.innerHTML = `<p class="rv-empty">${both("Пока нет ни одного отзыва. Ваш может быть первым.", "No reviews yet. Yours can be the first.")}</p>`;
+      more.hidden = true;
+      return;
+    }
+    const avg = RV.all.reduce((a, r) => a + r.rating, 0) / RV.all.length;
+    const n = RV.all.length;
+    const ruWord = n % 10 === 1 && n % 100 !== 11 ? "отзыв" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? "отзыва" : "отзывов";
+    sum.innerHTML = `<b>${avg.toFixed(1)}</b>${starsHtml(Math.round(avg))}<span>${both(`${n} ${ruWord}`, `${n} review${n === 1 ? "" : "s"}`)}</span>`;
+    list.innerHTML = RV.all.slice(0, RV.shown).map(r => `
+      <article class="rv-item">
+        <header><strong>${esc(r.name)}</strong>${starsHtml(r.rating)}<time datetime="${esc(r.created_at)}">${fmtDate(r.created_at)}</time></header>
+        <p>${esc(r.text)}</p>
+      </article>`).join("");
+    more.hidden = RV.all.length <= RV.shown;
+  }
+
+  async function fetchReviews() {
+    const list = document.getElementById("rv-list");
+    if (!SB.url || !SB.key) {
+      list.innerHTML = `<p class="rv-empty">${both("Отзывы скоро появятся здесь.", "Reviews will appear here soon.")}</p>`;
+      return;
+    }
+    try {
+      const r = await fetch(`${SB.url}/rest/v1/reviews?select=name,rating,text,created_at&approved=eq.true&order=created_at.desc&limit=200`, { headers: sbHeaders() });
+      if (!r.ok) throw new Error(r.status);
+      RV.all = await r.json();
+      renderReviews();
+    } catch (e) {
+      list.innerHTML = `<p class="rv-empty">${both("Не удалось загрузить отзывы. Обновите страницу чуть позже.", "Couldn't load reviews. Refresh the page a bit later.")}</p>`;
+    }
+  }
+
+  // Выбор оценки звёздами
+  const starsBox = document.getElementById("rv-stars");
+  starsBox.insertAdjacentHTML("beforeend", [1, 2, 3, 4, 5].map(i =>
+    `<input type="radio" name="rating" id="rv-star-${i}" value="${i}"><label for="rv-star-${i}" title="${i}" data-v="${i}">★</label>`).join(""));
+  const paintStars = n => starsBox.querySelectorAll("label").forEach(l => l.classList.toggle("on", +l.dataset.v <= n));
+  starsBox.addEventListener("change", e => { RV.rating = +e.target.value; paintStars(RV.rating); });
+  starsBox.addEventListener("mouseover", e => { const l = e.target.closest("label"); if (l) paintStars(+l.dataset.v); });
+  starsBox.addEventListener("mouseleave", () => paintStars(RV.rating));
+
+  const textEl = document.getElementById("rv-text");
+  textEl.addEventListener("input", () => { document.getElementById("rv-count").textContent = `${textEl.value.length} / 1000`; });
+  document.getElementById("rv-more").addEventListener("click", () => { RV.shown += 6; renderReviews(); });
+
+  document.getElementById("rv-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const status = document.getElementById("rv-status"), btn = document.getElementById("rv-submit");
+    const say = (ru, en) => { status.innerHTML = both(ru, en); };
+    const name = document.getElementById("rv-name").value.trim();
+    const text = textEl.value.trim();
+    if (document.getElementById("rv-website").value) return; // ловушка для ботов
+    if (name.length < 2) return say("Введите имя или ник, хотя бы 2 символа.", "Enter a name or nickname, at least 2 characters.");
+    if (!RV.rating) return say("Поставьте оценку от 1 до 5 звёзд.", "Pick a rating from 1 to 5 stars.");
+    if (text.length < 10) return say("Напишите отзыв хотя бы в 10 символов.", "Write at least 10 characters.");
+    if (!SB.url || !SB.key) return say("Приём отзывов ещё не включён. Загляните чуть позже.", "Reviews aren't open yet. Please check back later.");
+    let last = 0; try { last = +localStorage.getItem("open-review-sent") || 0; } catch (err) {}
+    if (Date.now() - last < 10 * 60 * 1000) return say("Отзыв уже отправлен. Следующий можно через 10 минут.", "Review already sent. You can send another in 10 minutes.");
+    btn.disabled = true;
+    say("Отправляю…", "Sending…");
+    try {
+      const r = await fetch(`${SB.url}/rest/v1/reviews`, {
+        method: "POST",
+        headers: { ...sbHeaders(), Prefer: "return=minimal" },
+        body: JSON.stringify({ name, rating: RV.rating, text, lang: S.lang })
+      });
+      if (!r.ok) throw new Error(r.status);
+      try { localStorage.setItem("open-review-sent", String(Date.now())); } catch (err) {}
+      e.target.reset(); RV.rating = 0; paintStars(0);
+      document.getElementById("rv-count").textContent = "0 / 1000";
+      say("Спасибо! Отзыв появится на сайте после проверки.", "Thank you! Your review will appear after a quick check.");
+    } catch (err) {
+      say("Не получилось отправить. Попробуйте ещё раз чуть позже.", "Couldn't send. Please try again a bit later.");
+    } finally { btn.disabled = false; }
+  });
+
+  // ============== Обсуждение на GitHub (Giscus), по кнопке ==============
+  const GISCUS = { repo: "pirogovv-collab/OPEN", repoId: "R_kgDOVB_hwg", category: "Отзовы", categoryId: "DIC_kwDOVB_hws4DJT9A" };
   let giscusLoaded = false;
-  function loadReviews(lang) {
+  function loadGiscus(lang) {
     const box = document.getElementById("reviews-box");
-    if (!GISCUS.repoId || !GISCUS.categoryId) return;
     if (giscusLoaded) {
       const frame = document.querySelector("iframe.giscus-frame");
       if (frame) frame.contentWindow.postMessage({ giscus: { setConfig: { lang } } }, "https://giscus.app");
@@ -1395,13 +1620,48 @@ footer a { color: var(--muted); }
       "data-reactions-enabled": "1", "data-emit-metadata": "0", "data-input-position": "top",
       "data-theme": "transparent_dark", "data-lang": lang, "data-loading": "lazy"
     }).forEach(([k, v]) => sc.setAttribute(k, v));
-    sc.onload = () => { const w = box.querySelector(".reviews-wait"); if (w) w.remove(); };
     box.appendChild(sc);
-    setTimeout(() => {
-      if (box.querySelector("iframe")) return;
-      const w = box.querySelector(".reviews-wait");
-      if (w) w.innerHTML = '<span data-l="ru">Форма отзывов не загрузилась. Отзывы можно прочитать и оставить </span><span data-l="en">The review form didn\'t load. You can read and leave reviews </span><a href="https://github.com/pirogovv-collab/OPEN/discussions" target="_blank" rel="noopener"><span data-l="ru">на GitHub</span><span data-l="en">on GitHub</span></a>.';
-    }, 10000);
+  }
+  document.getElementById("rv-giscus-btn").addEventListener("click", e => { e.currentTarget.disabled = true; loadGiscus(S.lang); });
+
+  // ============== Последний релиз с GitHub ==============
+  // Номер версии, ссылка на установщик и описание релиза берутся с GitHub при открытии страницы,
+  // поэтому после публикации нового релиза сайт обновляется сам. Если GitHub недоступен,
+  // остаётся то, что вписано в страницу.
+  async function loadLatestRelease() {
+    const KEY = "open-latest-release";
+    let rel = null;
+    try {
+      const cached = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (cached && Date.now() - cached.at < 60 * 60 * 1000) rel = cached.rel;
+    } catch (e) {}
+    if (!rel) {
+      try {
+        const r = await fetch("https://api.github.com/repos/pirogovv-collab/OPEN/releases/latest", { headers: { Accept: "application/vnd.github+json" } });
+        if (!r.ok) return;
+        const j = await r.json();
+        const exe = (j.assets || []).find(a => /\.exe$/i.test(a.name));
+        rel = { tag: String(j.tag_name || "").replace(/^v/i, ""), date: j.published_at, body: j.body || "", url: j.html_url, exe: exe ? exe.browser_download_url : null };
+        try { localStorage.setItem(KEY, JSON.stringify({ at: Date.now(), rel })); } catch (e) {}
+      } catch (e) { return; }
+    }
+    if (!rel || !/^\d+(\.\d+)+$/.test(rel.tag)) return;
+
+    document.querySelectorAll(".js-ver").forEach(el => { el.textContent = rel.tag; });
+    if (rel.exe) document.querySelectorAll(".js-dl").forEach(a => { a.href = rel.exe; a.removeAttribute("target"); });
+
+    const list = document.getElementById("versions-list");
+    if (list && !list.querySelector(`[data-ver="${CSS.escape(rel.tag)}"]`) && rel.body.trim()) {
+      list.querySelectorAll("details").forEach(d => d.open = false);
+      const date = rel.date ? new Date(rel.date).toLocaleDateString(S.lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
+      const d = document.createElement("details");
+      d.open = true;
+      d.dataset.ver = rel.tag;
+      d.innerHTML = `<summary><b>${esc(rel.tag)}</b><span>${both("Последний релиз · " + esc(date), "Latest release · " + esc(date))}</span></summary>
+        <div class="rel-body">${esc(rel.body.replace(/\r/g, "").replace(/^#+\s*/gm, "").replace(/\*\*/g, "").trim())}</div>
+        <p class="rel-link"><a href="${esc(rel.url)}" target="_blank" rel="noopener">${both("Открыть релиз на GitHub", "Open the release on GitHub")}</a></p>`;
+      list.prepend(d);
+    }
   }
 
   // ============== Язык ==============
@@ -1410,12 +1670,16 @@ footer a { color: var(--muted); }
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
     store.set("open-lang", lang);
-    loadReviews(lang);
+    if (giscusLoaded) loadGiscus(lang);
+    renderReviewsSafe();
     render(true);
   }
   document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+  function renderReviewsSafe() { if (RV.all.length) renderReviews(); }
   const saved = store.get("open-lang");
   setLang(saved || ((navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en"));
+  fetchReviews();
+  loadLatestRelease();
 })();
 </script>
 </body>
