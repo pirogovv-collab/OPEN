@@ -637,7 +637,7 @@ footer a { color: var(--muted); }
           <label class="rv-hp" aria-hidden="true">Website <input type="text" id="rv-website" name="website" tabindex="-1" autocomplete="off"></label>
           <button class="btn primary" type="submit" id="rv-submit"><span data-l="ru">Отправить</span><span data-l="en">Send</span></button>
           <p class="rv-status" id="rv-status" role="status" aria-live="polite"></p>
-          <p class="rv-note"><span data-l="ru">Регистрация не нужна. Отзыв появится на сайте после проверки, обычно в течение дня. Ошибки лучше писать в</span><span data-l="en">No sign-up needed. Your review appears after a quick check, usually within a day. Report bugs in</span> <a href="https://github.com/pirogovv-collab/OPEN/issues" target="_blank" rel="noopener">Issues</a>.</p>
+          <p class="rv-note"><span data-l="ru">Регистрация не нужна. Обычно отзыв появляется сразу. Если в нём есть ссылки, контакты или мат, его сначала проверят вручную. Ошибки лучше писать в</span><span data-l="en">No sign-up needed. Reviews usually go live right away. Ones with links, contacts or swearing are checked by hand first. Report bugs in</span> <a href="https://github.com/pirogovv-collab/OPEN/issues" target="_blank" rel="noopener">Issues</a>.</p>
         </form>
         <div>
           <div class="rv-summary" id="rv-summary"></div>
@@ -1597,7 +1597,12 @@ footer a { color: var(--muted); }
       try { localStorage.setItem("open-review-sent", String(Date.now())); } catch (err) {}
       e.target.reset(); RV.rating = 0; paintStars(0);
       document.getElementById("rv-count").textContent = "0 / 1000";
-      say("Спасибо! Отзыв появится на сайте после проверки.", "Thank you! Your review will appear after a quick check.");
+      // Автомодерация в базе решает сразу: перечитываем список и смотрим, появился ли отзыв.
+      await fetchReviews();
+      if (RV.all.some(r => r.name === name && r.text === text))
+        say("Спасибо! Отзыв опубликован.", "Thank you! Your review is live.");
+      else
+        say("Спасибо! Отзыв ушёл на проверку и появится после неё.", "Thank you! Your review is waiting for a quick check.");
     } catch (err) {
       say("Не получилось отправить. Попробуйте ещё раз чуть позже.", "Couldn't send. Please try again a bit later.");
     } finally { btn.disabled = false; }
