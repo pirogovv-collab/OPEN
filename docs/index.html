@@ -347,7 +347,8 @@ tfoot td { color: var(--muted); background: var(--bg-top); font-size: 0.8125rem;
 .stars i { font-style: normal; color: var(--border); }
 .rv-list { display: grid; }
 .rv-item { padding: 18px 0; border-bottom: 1px solid var(--border); min-width: 0; }
-.rv-item header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rv-item header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rv-item header time { margin-left: auto; }
 .rv-item strong { font-weight: 600; }
 .rv-item time { font: 400 0.75rem var(--font-mono); color: var(--dim); }
 .rv-item p { margin: 8px 0 0; color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; }
@@ -641,7 +642,7 @@ footer a { color: var(--muted); }
         <div>
           <div class="rv-summary" id="rv-summary"></div>
           <div class="rv-list" id="rv-list"><p class="rv-empty"><span data-l="ru">Загружаю отзывы…</span><span data-l="en">Loading reviews…</span></p></div>
-          <button class="btn sm rv-more" id="rv-more" type="button" hidden><span data-l="ru">Показать ещё</span><span data-l="en">Show more</span></button>
+          <a class="btn sm rv-more" id="rv-more" href="reviews.html" hidden><span data-l="ru">Все отзывы</span><span data-l="en">All reviews</span> <span id="rv-all-n"></span> →</a>
           <div class="rv-github">
             <span data-l="ru">Есть аккаунт GitHub? Можно обсудить OPEN и там:</span><span data-l="en">Have a GitHub account? You can discuss OPEN there too:</span>
             <button type="button" id="rv-giscus-btn"><span data-l="ru">открыть обсуждение</span><span data-l="en">open the discussion</span></button>
@@ -666,7 +667,7 @@ footer a { color: var(--muted); }
       <div class="install">
         <ol class="steps">
           <li><div><h3><span data-l="ru">Скачайте установщик</span><span data-l="en">Download the installer</span></h3>
-            <p data-l="ru">Файл OPEN-Setup-<span class="js-ver">0.7.5</span>.exe лежит на странице релизов GitHub.</p><p data-l="en">OPEN-Setup-<span class="js-ver">0.7.5</span>.exe is on the GitHub releases page.</p><p class="terms-note" data-l="ru">Устанавливая OPEN, вы принимаете <a href="terms.html">пользовательское соглашение</a>.</p><p class="terms-note" data-l="en">By installing OPEN you accept the <a href="terms.html">Terms of Use</a>.</p></div></li>
+            <p data-l="ru">Файл OPEN-Setup-<span class="js-ver">0.7.5</span>.exe лежит на странице релизов GitHub.</p><p data-l="en">OPEN-Setup-<span class="js-ver">0.7.5</span>.exe is on the GitHub releases page.</p><p class="terms-note" data-l="ru">Как пользоваться каждой вкладкой, написано в <a href="manual.html">руководстве</a>. Устанавливая OPEN, вы принимаете <a href="terms.html">пользовательское соглашение</a>.</p><p class="terms-note" data-l="en">The <a href="manual.html">user guide</a> explains every tab. By installing OPEN you accept the <a href="terms.html">Terms of Use</a>.</p></div></li>
           <li><div><h3><span data-l="ru">Запустите и разрешите права администратора</span><span data-l="en">Run it and allow administrator rights</span></h3>
             <p data-l="ru">Без них OPEN не сможет менять системный раздел реестра и считать кадры. Если SmartScreen покажет предупреждение, нажмите «Подробнее» и «Выполнить в любом случае».</p>
             <p data-l="en">OPEN needs them to change the system part of the registry and count frames. If SmartScreen shows a warning, click "More info" and "Run anyway".</p></div></li>
@@ -838,6 +839,8 @@ footer a { color: var(--muted); }
       <footer>
         <span>OPEN · 2026</span>
         <span><a href="https://github.com/pirogovv-collab/OPEN" target="_blank" rel="noopener">GitHub</a></span>
+        <span><a href="reviews.html"><span data-l="ru">Отзывы</span><span data-l="en">Reviews</span></a></span>
+        <span><a href="manual.html"><span data-l="ru">Руководство пользователя</span><span data-l="en">User guide</span></a></span>
         <span><a href="terms.html"><span data-l="ru">Пользовательское соглашение</span><span data-l="en">Terms of Use</span></a></span>
         <span><span data-l="ru">«Запрет» использует zapret (bol-van) и сборку Flowseal по лицензии MIT, драйвер WinDivert по лицензии LGPL v3.</span><span data-l="en">Zapret uses zapret (bol-van) and the Flowseal build under the MIT license, and the WinDivert driver under LGPL v3.</span></span>
       </footer>
@@ -1516,7 +1519,7 @@ footer a { color: var(--muted); }
     if (!SB.key.startsWith("sb_")) h.Authorization = "Bearer " + SB.key;
     return h;
   };
-  const RV = { all: [], shown: 6, rating: 0 };
+  const RV = { all: [], shown: 3, rating: 0 };
   const starsHtml = n => `<span class="stars" aria-label="${n} / 5">${"★".repeat(n)}<i>${"★".repeat(5 - n)}</i></span>`;
   const fmtDate = iso => { try { return new Date(iso).toLocaleDateString(S.lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } };
 
@@ -1537,7 +1540,8 @@ footer a { color: var(--muted); }
         <header><strong>${esc(r.name)}</strong>${starsHtml(r.rating)}<time datetime="${esc(r.created_at)}">${fmtDate(r.created_at)}</time></header>
         <p>${esc(r.text)}</p>
       </article>`).join("");
-    more.hidden = RV.all.length <= RV.shown;
+    more.hidden = false;
+    document.getElementById("rv-all-n").textContent = `(${n})`;
   }
 
   async function fetchReviews() {
@@ -1567,7 +1571,6 @@ footer a { color: var(--muted); }
 
   const textEl = document.getElementById("rv-text");
   textEl.addEventListener("input", () => { document.getElementById("rv-count").textContent = `${textEl.value.length} / 1000`; });
-  document.getElementById("rv-more").addEventListener("click", () => { RV.shown += 6; renderReviews(); });
 
   document.getElementById("rv-form").addEventListener("submit", async e => {
     e.preventDefault();

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Руководство OPEN</title>
+<meta name="description" content="Руководство пользователя OPEN: установка, первый запуск и все вкладки приложения.">
+<meta name="theme-color" content="#0c0c0d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e8e8ea'/%3E%3Cstop offset='1' stop-color='%23ababb0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='3' y='3' width='26' height='26' rx='7' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg: #0c0c0d; --bg-top: #141416; --surface: #161618; --surface-alt: #202023;
+  --border: #2e2e31; --text: #f2f2f3; --muted: #9a9a9e; --dim: #5f5f64; --accent: #e8e8ea;
+  --font-display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Onest", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html[lang="ru"] [data-l="en"], html[lang="en"] [data-l="ru"] { display: none !important; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg);
+  background-image: radial-gradient(1200px 500px at 15% -10%, var(--bg-top), transparent 70%);
+  color: var(--text); font: 400 1rem/1.65 var(--font-body); -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.top .wrap { display: flex; align-items: center; gap: 20px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.05rem/1 var(--font-display); letter-spacing: 0.02em; margin-right: auto; }
+.logo { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, var(--accent), #ababb0); flex: none; }
+.back { color: var(--muted); text-decoration: none; font-size: 0.9375rem; }
+.back:hover { color: var(--text); }
+.lang { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.lang button { background: none; border: 0; color: var(--muted); font: 500 0.8125rem var(--font-body); padding: 6px 10px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--surface-alt); color: var(--text); }
+
+.head { padding: 56px 0 28px; border-bottom: 1px solid var(--border); }
+.head .eyebrow { color: var(--muted); font-size: 0.875rem; letter-spacing: 0.04em; }
+h1 { font: 700 clamp(1.7rem, 4.4vw, 2.8rem)/1.15 var(--font-display); margin: 12px 0 14px; letter-spacing: -0.01em; max-width: 18em; }
+.head p { color: var(--muted); max-width: 46em; margin: 0; }
+
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 56px; padding: 36px 0 72px; }
+.toc { position: sticky; top: 88px; align-self: start; }
+.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: t; }
+.toc li { counter-increment: t; }
+.toc a { display: flex; gap: 10px; text-decoration: none; color: var(--muted); font-size: 0.875rem; padding: 5px 0; line-height: 1.35; }
+.toc a::before { content: counter(t); color: var(--dim); min-width: 1.4em; font-variant-numeric: tabular-nums; }
+.toc a:hover, .toc a.on { color: var(--text); }
+
+section { padding: 4px 0 26px; }
+section + section { border-top: 1px solid var(--border); padding-top: 26px; }
+h2 { font: 600 1.1875rem/1.3 var(--font-body); margin: 0 0 12px; display: flex; gap: 12px; align-items: baseline; }
+h2 .n { font: 500 0.8125rem/1 var(--font-display); color: var(--dim); min-width: 1.6em; }
+section p, section ul { margin: 0 0 12px; color: #d4d4d7; max-width: 46em; overflow-wrap: anywhere; }
+section ul { padding-left: 1.2em; }
+section li { margin: 4px 0; }
+.tip { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 12px 16px; color: var(--text) !important; }
+section li::marker { color: var(--dim); }
+section > div { padding-left: calc(1.6em + 12px); }
+
+footer { border-top: 1px solid var(--border); padding: 24px 0 40px; color: var(--muted); font-size: 0.875rem; display: flex; flex-wrap: wrap; gap: 10px 24px; }
+
+@media (max-width: 820px) {
+  .layout { grid-template-columns: 1fr; gap: 24px; padding-top: 24px; }
+  .toc { position: static; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--surface); }
+  section > div { padding-left: 0; }
+  .back { display: none; }
+  .head { padding-top: 36px; }
+}
+@media print {
+  .top, .toc { display: none; }
+  body { background: #fff; color: #000; }
+  section p, section ul, .head p { color: #000; }
+  .layout { display: block; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><span class="logo" aria-hidden="true"></span>OPEN</a>
+    <a class="back" href="./"><span data-l="ru">← На главную</span><span data-l="en">← Back to home</span></a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="head">
+    <div class="eyebrow"><span data-l="ru">Для версии 0.7.5</span><span data-l="en">For version 0.7.5</span></div>
+    <h1><span data-l="ru">Руководство пользователя OPEN</span><span data-l="en">OPEN User Guide</span></h1>
+    <p><span data-l="ru">Как установить OPEN и пользоваться каждой вкладкой. Всё, что меняет OPEN, можно вернуть, поэтому смело пробуйте и сравнивайте.</span><span data-l="en">How to install OPEN and use every tab. Everything OPEN changes can be reverted, so feel free to try things out and compare.</span></p>
+  </div>
+  <div class="layout">
+    <nav class="toc" aria-label="Содержание"><ol>
+<li><a href="#install"><span data-l="ru">Требования и установка</span><span data-l="en">Requirements and installation</span></a></li>
+<li><a href="#first"><span data-l="ru">Первый запуск</span><span data-l="en">First launch</span></a></li>
+<li><a href="#home"><span data-l="ru">Главная</span><span data-l="en">Home</span></a></li>
+<li><a href="#optimizer"><span data-l="ru">Оптимизация</span><span data-l="en">Optimization</span></a></li>
+<li><a href="#presets"><span data-l="ru">Пресеты</span><span data-l="en">Presets</span></a></li>
+<li><a href="#games"><span data-l="ru">Игры</span><span data-l="en">Games</span></a></li>
+<li><a href="#editor"><span data-l="ru">Настройки игры вручную</span><span data-l="en">Editing game settings by hand</span></a></li>
+<li><a href="#servers"><span data-l="ru">Серверы и пинг</span><span data-l="en">Servers and ping</span></a></li>
+<li><a href="#zapret"><span data-l="ru">Запрет</span><span data-l="en">Zapret</span></a></li>
+<li><a href="#network"><span data-l="ru">Сеть</span><span data-l="en">Network</span></a></li>
+<li><a href="#performance"><span data-l="ru">Производительность</span><span data-l="en">Performance</span></a></li>
+<li><a href="#tools"><span data-l="ru">Инструменты</span><span data-l="en">Tools</span></a></li>
+<li><a href="#system"><span data-l="ru">Система</span><span data-l="en">System</span></a></li>
+<li><a href="#settings"><span data-l="ru">Настройки</span><span data-l="en">Settings</span></a></li>
+<li><a href="#revert"><span data-l="ru">Как вернуть всё и удалить OPEN</span><span data-l="en">Reverting everything and uninstalling</span></a></li>
+<li><a href="#faq"><span data-l="ru">Частые проблемы</span><span data-l="en">Troubleshooting</span></a></li>
+    </ol></nav>
+    <article>
+<section id="install">
+<h2><span class="n">1</span><span data-l="ru">Требования и установка</span><span data-l="en">Requirements and installation</span></h2>
+<div data-l="ru"><p>OPEN работает на Windows 10 и Windows 11 (64-бит). Для работы нужны права администратора: без них нельзя менять системные настройки и считывать кадры игры.</p>
+<ul><li>Скачайте OPEN-Setup с сайта или со страницы релизов на GitHub.</li><li>Запустите установщик, выберите язык и примите пользовательское соглашение.</li><li>После установки OPEN запустится сам. Windows покажет запрос контроля учётных записей: нажмите «Да».</li></ul>
+<p class="tip">Windows SmartScreen или антивирус могут предупредить о неизвестной программе: оптимизаторы меняют реестр и просят права администратора. Скачивайте OPEN только с официального сайта или GitHub.</p>
+<p>Новая версия ставится поверх старой, настройки и профили сохраняются.</p></div>
+<div data-l="en"><p>OPEN runs on Windows 10 and Windows 11 (64-bit). It needs administrator rights: without them it cannot change system settings or read game frames.</p>
+<ul><li>Download OPEN-Setup from the website or the GitHub releases page.</li><li>Run the installer, pick a language and accept the Terms of Use.</li><li>OPEN starts by itself after installation. Windows shows a User Account Control prompt: click Yes.</li></ul>
+<p class="tip">Windows SmartScreen or your antivirus may warn about an unknown program: optimizers edit the registry and ask for administrator rights. Download OPEN only from the official website or GitHub.</p>
+<p>A new version installs over the old one, and your settings and profiles are kept.</p></div>
+</section>
+<section id="first">
+<h2><span class="n">2</span><span data-l="ru">Первый запуск</span><span data-l="en">First launch</span></h2>
+<div data-l="ru"><p>При первом запуске OPEN спрашивает язык интерфейса, а затем открывает окно «Авто-настройка под ваш ПК». OPEN определяет видеокарту, процессор, память и версию Windows и предлагает подходящий набор твиков с пояснением к каждому.</p>
+<ul><li>Снимите галочки с того, что вам не нужно.</li><li>Нажмите «Применить выбранное» или «Пропустить», если хотите настроить всё вручную.</li><li>Отметка «Не показывать при запуске» убирает окно. Открыть его снова можно в «Настройках».</li></ul>
+<p class="tip">Перед первыми изменениями создайте точку восстановления Windows: вкладка «Система», кнопка «Создать точку».</p>
+<p>После обновления OPEN при первом запуске новой версии твики возвращаются к исходным настройкам Windows, а затем снова предлагается авто-настройка. Так новая версия начинает с чистого состояния.</p></div>
+<div data-l="en"><p>On first launch OPEN asks for the interface language and then opens the Auto-setup for your PC window. OPEN detects the graphics card, processor, memory and Windows version and suggests a suitable set of tweaks with an explanation for each.</p>
+<ul><li>Untick anything you don't want.</li><li>Click Apply selected, or Skip if you'd rather set everything up yourself.</li><li>Ticking Don't show at startup hides the window. You can open it again in Settings.</li></ul>
+<p class="tip">Before making any changes, create a Windows restore point: the System tab, Create restore point button.</p>
+<p>After an update, the first launch of the new version returns tweaks to the original Windows settings and offers auto-setup again. This way every version starts from a clean state.</p></div>
+</section>
+<section id="home">
+<h2><span class="n">3</span><span data-l="ru">Главная</span><span data-l="en">Home</span></h2>
+<div data-l="ru"><p>Главная нужна, чтобы оптимизировать систему за одно нажатие.</p>
+<ul><li>«Оптимизировать всё» применяет все твики, подходящие вашему железу. Перед каждым изменением OPEN сохраняет исходное значение.</li><li>«Откатить всё» возвращает все исходные значения.</li><li>Карточки показывают профиль производительности, число активных твиков, есть ли права администратора, видеокарту и запущенную игру.</li><li>«Игровой оверлей» показывает и скрывает счётчик FPS поверх игры. Горячая клавиша по умолчанию Alt+F11.</li></ul></div>
+<div data-l="en"><p>Home lets you optimize the system in one click.</p>
+<ul><li>Optimize all applies every tweak that suits your hardware. OPEN saves the original value before each change.</li><li>Revert all restores every original value.</li><li>The cards show the performance profile, the number of active tweaks, whether OPEN has administrator rights, the graphics card and the running game.</li><li>Game overlay shows or hides the FPS counter on top of the game. The default hotkey is Alt+F11.</li></ul></div>
+</section>
+<section id="optimizer">
+<h2><span class="n">4</span><span data-l="ru">Оптимизация</span><span data-l="en">Optimization</span></h2>
+<div data-l="ru"><p>Здесь каждый твик включается и выключается отдельно. Твики разбиты на группы: Windows и планировщик, видеокарта, NVIDIA, питание, сеть, мышь и клавиатура. Под каждым твиком написано, что он делает.</p>
+<ul><li>Переключатель включает твик, повторное нажатие возвращает исходное значение.</li><li>«Включить всё» и «Выключить всё» действуют на весь список.</li><li>Серые твики недоступны на вашем железе, например настройки NVIDIA без видеокарты NVIDIA.</li><li>Твик, который вы выключили вручную, автоматика больше не включает.</li></ul>
+<p>Некоторым твикам нужна перезагрузка, это указано в их описании.</p></div>
+<div data-l="en"><p>Here every tweak is turned on and off separately. Tweaks are grouped: Windows and scheduler, graphics card, NVIDIA, power, network, mouse and keyboard. Each tweak has a description of what it does.</p>
+<ul><li>The switch turns a tweak on, and turning it off restores the original value.</li><li>Enable all and Disable all act on the whole list.</li><li>Grey tweaks are unavailable on your hardware, for example NVIDIA settings without an NVIDIA card.</li><li>A tweak you turned off by hand is never turned back on by automation.</li></ul>
+<p>Some tweaks need a restart; their description says so.</p></div>
+</section>
+<section id="presets">
+<h2><span class="n">5</span><span data-l="ru">Пресеты</span><span data-l="en">Presets</span></h2>
+<div data-l="ru"><p>Пресет решает, что OPEN делает с конкретной игрой, когда она запущена. Для каждой игры из списка выберите один из вариантов:</p>
+<ul><li>«Киберспорт»: максимум FPS и минимальная задержка для соревновательных игр.</li><li>«Баланс»: подходит большинству игр.</li><li>«Качество»: для тяжёлых одиночных игр, где важна картинка.</li><li>«Выключен»: OPEN ничего не делает с этой игрой.</li></ul>
+<p>Пресет применяется автоматически, если в «Настройках» включена «Авто-оптимизация при запуске игры».</p></div>
+<div data-l="en"><p>A preset decides what OPEN does with a particular game while it runs. For each game in the list, pick one option:</p>
+<ul><li>Esports: maximum FPS and minimum latency for competitive games.</li><li>Balanced: suits most games.</li><li>Quality: for demanding single-player games where visuals matter.</li><li>Off: OPEN does nothing with this game.</li></ul>
+<p>The preset is applied automatically if Auto-optimize when a game starts is on in Settings.</p></div>
+</section>
+<section id="games">
+<h2><span class="n">6</span><span data-l="ru">Игры</span><span data-l="en">Games</span></h2>
+<div data-l="ru"><p>Вкладка меняет настройки внутри самих игр: CS2, Dota 2, Deadlock, Apex Legends, Rust, Fortnite и GTA V RP (Majestic RP, GTA5RP). Для каждой игры видно, установлена ли она и что сейчас настроено.</p>
+<ul><li>«Опции запуска Steam»: пропуск заставки и снятие лимита FPS. Ваши собственные опции не трогаются, «Откатить» возвращает то, что стояло до OPEN. Меняются при закрытом Steam.</li><li>«Рендер Vulkan» для Dota 2 и Deadlock: переключатель, чтобы сравнить, что быстрее на вашем железе.</li><li>«Видеонастройки игры» для Apex Legends, Fortnite и GTA V RP: тени, сглаживание и эффекты на минимум. Разрешение, текстуры и дальность прорисовки не меняются. Меняются при закрытой игре.</li><li>«Текстуры под видеопамять» для Fortnite: качество текстур подбирается под объём памяти видеокарты.</li><li>«Автопилот»: при запуске игры OPEN сам применяет её профиль и сообщает об этом уведомлением.</li></ul>
+<p class="tip">Игра записывает свои настройки при выходе. Если поменять их при запущенной игре, она перезапишет файл. Поэтому OPEN просит закрыть игру или Steam перед изменениями.</p></div>
+<div data-l="en"><p>This tab changes settings inside the games themselves: CS2, Dota 2, Deadlock, Apex Legends, Rust, Fortnite and GTA V RP (Majestic RP, GTA5RP). For each game you can see whether it's installed and what's currently set.</p>
+<ul><li>Steam launch options: skip the intro and remove the FPS limit. Your own options aren't touched, and Revert restores what was there before OPEN. Changed while Steam is closed.</li><li>Vulkan renderer for Dota 2 and Deadlock: a switch to compare which is faster on your hardware.</li><li>Game video settings for Apex Legends, Fortnite and GTA V RP: shadows, anti-aliasing and effects to minimum. Resolution, textures and view distance stay. Changed while the game is closed.</li><li>Textures for video memory in Fortnite: texture quality is picked to fit your graphics memory.</li><li>Autopilot: when a game starts, OPEN applies its profile by itself and lets you know with a notification.</li></ul>
+<p class="tip">A game writes its settings when it exits. If you change them while it runs, it overwrites the file. That's why OPEN asks you to close the game or Steam before making changes.</p></div>
+</section>
+<section id="editor">
+<h2><span class="n">7</span><span data-l="ru">Настройки игры вручную</span><span data-l="en">Editing game settings by hand</span></h2>
+<div data-l="ru"><p>У CS2, Apex Legends, Fortnite и GTA V RP в карточке игры есть кнопка «Настройки игры». Она открывает все параметры из файла настроек игры.</p>
+<ul><li>Известные параметры показаны с понятными названиями: тени, трава, сглаживание. Остальные видны, если отметить «Все параметры».</li><li>Найдите параметр через поиск, впишите значение, например 0 для теней, и нажмите «Сохранить».</li><li>Меняются только изменённые строки, остальной файл остаётся как был.</li><li>Перед первой правкой OPEN сохраняет копию файла. «Вернуть исходный файл» восстанавливает её.</li><li>«Отменить правки» сбрасывает несохранённые изменения, «Папка файла» открывает файл в проводнике.</li></ul>
+<p>Если файл не найден, запустите игру хотя бы раз и выйдите из неё: она создаст файл настроек.</p></div>
+<div data-l="en"><p>CS2, Apex Legends, Fortnite and GTA V RP have a Game settings button on their card. It opens every setting from the game's settings file.</p>
+<ul><li>Known settings are shown with clear names: shadows, grass, anti-aliasing. The rest appear when you tick All settings.</li><li>Find a setting with the search box, type a value, for example 0 for shadows, and click Save.</li><li>Only the changed lines are written; the rest of the file stays as it was.</li><li>OPEN keeps a copy of the file before the first edit. Restore original file brings it back.</li><li>Discard edits drops unsaved changes, and File folder opens the file in Explorer.</li></ul>
+<p>If the file isn't found, launch the game at least once and exit: it will create its settings file.</p></div>
+</section>
+<section id="servers">
+<h2><span class="n">8</span><span data-l="ru">Серверы и пинг</span><span data-l="en">Servers and ping</span></h2>
+<div data-l="ru"><p>Блок «Серверы и пинг» на вкладке «Игры» помогает играть на ближайших серверах.</p>
+<ul><li>Выберите свою страну. OPEN покажет, какой регион выбирать в Dota 2, Deadlock, Fortnite, Apex Legends и Rust.</li><li>«Проверить пинг» измеряет пинг до серверов Valve прямо с вашего компьютера и показывает ближайшие регионы. Это работает для CS2, Dota 2 и Deadlock.</li><li>«CS2: максимальный пинг поиска матча» не пускает поиск на далёкие сервера. OPEN предлагает значение по замеру: лучший пинг плюс запас. «Убрать лимит» возвращает поиск по умолчанию.</li></ul></div>
+<div data-l="en"><p>The Servers and ping block on the Games tab helps you play on the nearest servers.</p>
+<ul><li>Pick your country. OPEN shows which region to choose in Dota 2, Deadlock, Fortnite, Apex Legends and Rust.</li><li>Check ping measures ping to Valve servers right from your computer and shows the nearest regions. This works for CS2, Dota 2 and Deadlock.</li><li>CS2: max matchmaking ping keeps matchmaking off distant servers. OPEN suggests a value from the measurement: the best ping plus a margin. Remove limit restores the default matchmaking.</li></ul></div>
+</section>
+<section id="zapret">
+<h2><span class="n">9</span><span data-l="ru">Запрет</span><span data-l="en">Zapret</span></h2>
+<div data-l="ru"><p>Вкладка «Запрет» обходит замедление и блокировку Discord и YouTube. Она работает на сторонней сборке zapret (Flowseal) с сетевым драйвером WinDivert.</p>
+<ul><li>Прочитайте предупреждение и нажмите «Понятно, продолжить».</li><li>Нажмите «Скачать модуль». Он скачивается с GitHub. Если GitHub недоступен, скачайте архив сами и нажмите «Указать папку».</li><li>Включите «Обход Discord и YouTube».</li><li>«Подобрать автоматически» перебирает стратегии и оставляет первую, при которой Discord и YouTube открываются. Стратегию можно выбрать и вручную, а «Проверить» покажет, работает ли текущая.</li><li>«Пауза для игр с анти-читом» выключает обход, пока запущены Valorant, League of Legends, FACEIT или ESEA.</li><li>«Свои сайты» открывает список, куда можно дописать свои домены.</li></ul>
+<p class="tip">Антивирусы часто помечают WinDivert как RiskTool или HackTool. Это не вирус, но если файлы модуля пропали, добавьте его папку в исключения. Включайте «Запрет», только если это не нарушает законы вашей страны и условия провайдера.</p></div>
+<div data-l="en"><p>The Zapret tab gets around throttling and blocking of Discord and YouTube. It runs on the third-party zapret build (Flowseal) with the WinDivert network driver.</p>
+<ul><li>Read the warning and click Got it, continue.</li><li>Click Download module. It downloads from GitHub. If GitHub is unreachable, download the archive yourself and click Choose folder.</li><li>Turn on Discord and YouTube bypass.</li><li>Pick automatically tries strategies and keeps the first one that makes Discord and YouTube open. You can also pick a strategy by hand, and Check shows whether the current one works.</li><li>Pause for anti-cheat games turns the bypass off while Valorant, League of Legends, FACEIT or ESEA is running.</li><li>My sites opens a list where you can add your own domains.</li></ul>
+<p class="tip">Antivirus software often flags WinDivert as RiskTool or HackTool. It isn't a virus, but if module files disappear, add its folder to exclusions. Only turn Zapret on if doing so does not break the laws of your country or your provider's terms.</p></div>
+</section>
+<section id="network">
+<h2><span class="n">10</span><span data-l="ru">Сеть</span><span data-l="en">Network</span></h2>
+<div data-l="ru"><p>Вкладка «Сеть» показывает, откуда берутся лаги: из домашней сети, у провайдера или на сервере игры. Работа идёт в три шага.</p>
+<ul><li>Шаг 1. Нажмите «Записать игровую сессию» и играйте как обычно. OPEN дважды в секунду мерит пинг до роутера, до интернета и до сервера игры и показывает, какие программы качают.</li><li>Шаг 2. «Тест нагрузки (15 с)» 15 секунд качает на полной скорости и смотрит, как растёт пинг. «Сохранить отчёт» записывает файл на рабочий стол.</li><li>Шаг 3. «Открыть профиль…» загружает файл профиля сетевых настроек. OPEN показывает каждое изменение и текущее значение. «Применить» применяет профиль, «Откатить профиль» возвращает всё как было.</li></ul>
+<p class="tip">Если пинг сильно растёт во время теста нагрузки, лаги идут от роутера. Помогает настройка QoS на роутере, а не твики Windows.</p>
+<p>В отчёте нет IP-адресов, MAC-адресов и названий сетей Wi-Fi. Профиль меняет только то, что надёжно откатывается: свойства сетевой карты, её энергосбережение, TCP для подключения, DNS, MTU и раздачу обновлений Windows.</p></div>
+<div data-l="en"><p>The Network tab shows where lag comes from: your home network, your provider or the game server. It works in three steps.</p>
+<ul><li>Step 1. Click Record a game session and play as usual. Twice a second OPEN measures ping to the router, the internet and the game server, and shows which apps are downloading.</li><li>Step 2. Load test (15 s) downloads at full speed for 15 seconds and watches how ping rises. Save report writes a file to the desktop.</li><li>Step 3. Open profile… loads a network settings profile file. OPEN shows every change and the current value. Apply applies the profile, and Revert profile puts everything back.</li></ul>
+<p class="tip">If ping rises a lot during the load test, the lag comes from the router. QoS on the router helps, not Windows tweaks.</p>
+<p>The report has no IP addresses, MAC addresses or Wi-Fi network names. The profile only changes what reverts reliably: network card properties, its power saving, TCP for the connection, DNS, MTU and Windows update sharing.</p></div>
+</section>
+<section id="performance">
+<h2><span class="n">11</span><span data-l="ru">Производительность</span><span data-l="en">Performance</span></h2>
+<div data-l="ru"><ul><li>«Компоненты» показывают в реальном времени загрузку и температуру процессора и видеокарты, память, видеопамять и скорость интернета.</li><li>«Игровые сессии» сохраняют после каждой игры средний FPS, 1 % low и время игры. Сессии короче 30 секунд не записываются. «Экспорт CSV» выгружает историю в таблицу.</li><li>«Анализ узкого места»: нажмите «Анализировать» во время игры. OPEN несколько секунд смотрит на загрузку процессора и видеокарты и говорит, во что упирается FPS, с советами.</li><li>«Бенчмарк (до/после)»: запустите игру, выберите длительность и нажмите «Замер «До»». Затем примените твики, вернитесь в то же место игры и нажмите «Замер «После»». OPEN покажет разницу в процентах.</li></ul>
+<p class="tip">Для честного сравнения делайте оба замера в одной и той же сцене игры, с одинаковыми настройками графики.</p></div>
+<div data-l="en"><ul><li>Components show live load and temperature of the processor and graphics card, memory, video memory and internet speed.</li><li>Game sessions store average FPS, 1% low and play time after every game. Sessions under 30 seconds aren't recorded. Export CSV saves the history to a spreadsheet.</li><li>Bottleneck analysis: click Analyze while playing. OPEN watches processor and graphics card load for a few seconds and tells you what limits FPS, with advice.</li><li>Benchmark (before/after): start the game, pick a duration and click Before run. Then apply tweaks, return to the same spot in the game and click After run. OPEN shows the difference in percent.</li></ul>
+<p class="tip">For a fair comparison, run both measurements in the same game scene with the same graphics settings.</p></div>
+</section>
+<section id="tools">
+<h2><span class="n">12</span><span data-l="ru">Инструменты</span><span data-l="en">Tools</span></h2>
+<div data-l="ru"><ul><li>«Обслуживание системы»: очистка временных файлов, кэша шейдеров DirectX, NVIDIA и AMD и освобождение памяти. Кэш шейдеров игры создадут заново, первые минуты игры могут быть чуть медленнее.</li><li>«Проверка на легальность» смотрит, не заблокирован ли доступ к путям, реестру и службам, которые проверяют анти-читы RP-серверов. Проверка ничего не меняет.</li><li>«Профиль NVIDIA (.nip)»: «Применить рекомендованный» или «Импортировать .nip…». Перед импортом OPEN сохраняет текущие настройки драйвера, «Откатить» возвращает их. Для этого нужен NVIDIA Profile Inspector в папке Assets\tools\npi рядом с OPEN.</li><li>«Системные команды» и «Ручные настройки» выключены по умолчанию. Кнопка «Оптимизировать всё» их не трогает, каждая включается отдельно.</li></ul></div>
+<div data-l="en"><ul><li>System maintenance: clears temporary files, the DirectX, NVIDIA and AMD shader caches, and frees memory. Games rebuild their shader cache, so the first minutes of play may be slightly slower.</li><li>Legality check looks at whether access is blocked to paths, registry keys and services that RP server anti-cheats inspect. It changes nothing.</li><li>NVIDIA profile (.nip): Apply recommended or Import .nip…. OPEN saves the current driver settings before importing, and Revert restores them. This needs NVIDIA Profile Inspector in the Assets\tools\npi folder next to OPEN.</li><li>System commands and Manual settings are off by default. Optimize all leaves them alone; each one is turned on separately.</li></ul></div>
+</section>
+<section id="system">
+<h2><span class="n">13</span><span data-l="ru">Система</span><span data-l="en">System</span></h2>
+<div data-l="ru"><ul><li>«Точка восстановления»: создаёт точку восстановления Windows одной кнопкой.</li><li>«Частота монитора»: «Выставить максимум» включает самую высокую частоту, которую поддерживает монитор.</li><li>«Автозагрузка»: отключает программы из автозапуска без удаления записи.</li><li>DNS: выбор быстрого публичного DNS или автоматического, кнопка «Сбросить кэш».</li><li>«Удаление встроенного мусора»: удаляет выбранные встроенные приложения Windows. Их можно вернуть через Microsoft Store.</li><li>«Системные твики»: визуальные эффекты, фоновые приложения, таймер 0,5 мс, сетевая задержка, телеметрия и парковка ядер. Выключение твика возвращает значение Windows по умолчанию.</li></ul></div>
+<div data-l="en"><ul><li>Restore point: creates a Windows restore point in one click.</li><li>Monitor refresh rate: Set maximum turns on the highest refresh rate your monitor supports.</li><li>Startup: disables programs from startup without deleting the entry.</li><li>DNS: pick a fast public DNS or automatic, plus a Flush cache button.</li><li>Remove built-in bloat: removes selected built-in Windows apps. You can get them back from the Microsoft Store.</li><li>System tweaks: visual effects, background apps, the 0.5 ms timer, network latency, telemetry and core parking. Turning a tweak off restores the Windows default.</li></ul></div>
+</section>
+<section id="settings">
+<h2><span class="n">14</span><span data-l="ru">Настройки</span><span data-l="en">Settings</span></h2>
+<div data-l="ru"><ul><li>Игровая автоматизация: «Авто-оптимизация при запуске игры», «Откатывать твики при выходе из игры» и «Усыплять фон на время игры». Фоновые программы не закрываются, а приостанавливаются и просыпаются после игры.</li><li>Оверлей: показывать ли его, показывать ли загрузку CPU и GPU, угол экрана и горячая клавиша («Задать клавишу»).</li><li>«Boost-режим процесса»: повышает приоритет игры и снимает с неё троттлинг EcoQoS в Windows 11.</li><li>«Запускать OPEN вместе с Windows»: через задачу планировщика с правами администратора, без запроса UAC при входе.</li><li>«Автоопределение любой игры»: OPEN ловит любую игру в полноэкранном режиме, а не только из списка.</li><li>«Доверенный режим» разрешает включать вместе настройки, которые конфликтуют друг с другом. Только для опытных.</li><li>«Резервная копия настроек» сохраняет все профили и настройки в один файл и восстанавливает их, например на другом ПК.</li><li>«Обновления»: «Проверить сейчас» и «Автоматически обновлять при запуске».</li><li>Язык интерфейса, окно «Что нового» и «Пользовательское соглашение». Смена языка требует перезапуска OPEN.</li></ul></div>
+<div data-l="en"><ul><li>Game automation: Auto-optimize when a game starts, Revert tweaks when the game exits and Put background apps to sleep while gaming. Background apps aren't closed: they're suspended and wake up after the game.</li><li>Overlay: whether to show it, whether to show CPU and GPU load, the screen corner and the hotkey (Set key).</li><li>Process boost mode: raises the game's priority and removes Windows 11 EcoQoS throttling from it.</li><li>Start OPEN with Windows: through a Task Scheduler task with administrator rights, with no UAC prompt at sign-in.</li><li>Detect any game: OPEN catches any full-screen game, not just those on the list.</li><li>Trusted mode lets you turn on settings that conflict with each other at the same time. For experienced users only.</li><li>Settings backup saves all profiles and settings to one file and restores them, for example on another PC.</li><li>Updates: Check now and Update automatically at startup.</li><li>Interface language, the What's new window and Terms of Use. Changing the language requires restarting OPEN.</li></ul></div>
+</section>
+<section id="revert">
+<h2><span class="n">15</span><span data-l="ru">Как вернуть всё и удалить OPEN</span><span data-l="en">Reverting everything and uninstalling</span></h2>
+<div data-l="ru"><ul><li>Твики: «Откатить всё» на Главной.</li><li>Настройки игр: «Откатить» в карточке игры или «Вернуть исходный файл» в редакторе.</li><li>Профиль сети: «Откатить профиль» на вкладке «Сеть».</li><li>Запрет: выключите обход. При выходе из OPEN обход и драйвер выключаются сами.</li><li>Профиль NVIDIA: «Откатить» на вкладке «Инструменты».</li></ul>
+<p>После этого удалите OPEN через «Параметры Windows → Приложения». Само удаление программы сделанные настройки не откатывает, поэтому сначала верните их.</p></div>
+<div data-l="en"><ul><li>Tweaks: Revert all on Home.</li><li>Game settings: Revert on the game card, or Restore original file in the editor.</li><li>Network profile: Revert profile on the Network tab.</li><li>Zapret: turn the bypass off. When OPEN exits, the bypass and the driver stop by themselves.</li><li>NVIDIA profile: Revert on the Tools tab.</li></ul>
+<p>Then uninstall OPEN from Windows Settings → Apps. Uninstalling does not by itself revert the changes, so put them back first.</p></div>
+</section>
+<section id="faq">
+<h2><span class="n">16</span><span data-l="ru">Частые проблемы</span><span data-l="en">Troubleshooting</span></h2>
+<div data-l="ru"><ul><li>Оверлей не показывает FPS. Запустите OPEN от администратора: кадры считываются через системные события Windows, без прав они недоступны. Оверлей работает в играх на DirectX.</li><li>Нет температуры процессора. Для неё нужен драйвер PawnIO. Загрузка процессора и все данные видеокарты работают без него.</li><li>Игра сбросила настройки. Изменения делались при запущенной игре или Steam. Закройте их, примените настройки снова.</li><li>«Запрет» не помогает. Нажмите «Подобрать автоматически». Если файлы модуля пропали, их удалил антивирус: добавьте папку модуля в исключения.</li><li>Антивирус ругается на OPEN. Скачайте установщик заново с официального сайта. Если предупреждение осталось, сообщите о ложном срабатывании через GitHub Issues.</li></ul></div>
+<div data-l="en"><ul><li>The overlay shows no FPS. Run OPEN as administrator: frames are read from Windows system events, which aren't available without admin rights. The overlay works in DirectX games.</li><li>No CPU temperature. It needs the PawnIO driver. CPU load and all graphics card data work without it.</li><li>The game reset its settings. The changes were made while the game or Steam was running. Close them and apply the settings again.</li><li>Zapret doesn't help. Click Pick automatically. If module files disappeared, your antivirus removed them: add the module folder to exclusions.</li><li>Antivirus flags OPEN. Download the installer again from the official website. If the warning stays, report a false positive through GitHub Issues.</li></ul></div>
+</section>
+    </article>
+  </div>
+  <footer>
+    <span>OPEN · 2026</span>
+    <a href="./"><span data-l="ru">Главная</span><span data-l="en">Home</span></a>
+    <a href="manual.html"><span data-l="ru">Руководство</span><span data-l="en">User guide</span></a>
+    <a href="terms.html"><span data-l="ru">Пользовательское соглашение</span><span data-l="en">Terms of Use</span></a>
+    <a href="https://github.com/pirogovv-collab/OPEN" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+</main>
+<script>
+(() => {
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  function setLang(lang, save) {
+    document.documentElement.lang = lang;
+    document.title = lang === "ru" ? "Руководство OPEN" : "OPEN User Guide";
+    document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    if (save) store.set("open-lang", lang);
+  }
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang, true)));
+  // Язык: ?lang=en из приложения, затем выбор на сайте, затем язык браузера.
+  const q = new URLSearchParams(location.search).get("lang");
+  const lang = q === "en" || q === "ru" ? q : (store.get("open-lang") || ((navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en"));
+  setLang(lang, false);
+
+  // Подсветка текущего раздела в оглавлении.
+  const links = [...document.querySelectorAll(".toc a")];
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
+    }), { rootMargin: "-90px 0px -65% 0px" });
+    document.querySelectorAll("article section").forEach(s => io.observe(s));
+  }
+})();
+</script>
+</body>
+</html>

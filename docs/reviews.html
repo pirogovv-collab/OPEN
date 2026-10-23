@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Отзывы об OPEN</title>
+<meta name="description" content="Отзывы пользователей OPEN: оценки, игры, железо и что изменилось. Оставить отзыв можно без регистрации.">
+<meta name="theme-color" content="#0c0c0d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e8e8ea'/%3E%3Cstop offset='1' stop-color='%23ababb0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='3' y='3' width='26' height='26' rx='7' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+:root {
+  --bg: #0c0c0d; --bg-top: #141416; --surface: #161618; --surface-alt: #202023;
+  --border: #2e2e31; --text: #f2f2f3; --muted: #9a9a9e; --dim: #5f5f64; --accent: #e8e8ea; --on-accent: #0c0c0d;
+  --font-display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Onest", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, ui-monospace, monospace;
+  color-scheme: dark;
+}
+html[lang="ru"] [data-l="en"], html[lang="en"] [data-l="ru"] { display: none !important; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+body {
+  margin: 0; background: var(--bg);
+  background-image: radial-gradient(1200px 500px at 15% -10%, var(--bg-top), transparent 70%);
+  color: var(--text); font: 400 1rem/1.6 var(--font-body); -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-underline-offset: 3px; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.top .wrap { display: flex; align-items: center; gap: 20px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.05rem/1 var(--font-display); letter-spacing: 0.02em; margin-right: auto; }
+.logo { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, var(--accent), #ababb0); flex: none; }
+.back { color: var(--muted); text-decoration: none; font-size: 0.9375rem; }
+.back:hover { color: var(--text); }
+.lang { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.lang button { background: none; border: 0; color: var(--muted); font: 500 0.8125rem var(--font-body); padding: 6px 10px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--surface-alt); color: var(--text); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 500 0.9375rem/1 var(--font-body); text-decoration: none; cursor: pointer; border-radius: 10px; padding: 13px 20px; border: 1px solid var(--border); background: transparent; color: var(--text); transition: background .15s, border-color .15s; }
+.btn:hover { border-color: var(--dim); background: var(--surface); }
+.btn.primary { background: linear-gradient(180deg, #f2f2f3, #c9c9cc); color: var(--on-accent); border-color: transparent; }
+.btn.primary:hover { background: linear-gradient(180deg, #ffffff, #d6d6d9); }
+.btn.sm { padding: 9px 14px; font-size: 0.875rem; border-radius: 9px; }
+.btn:disabled { opacity: .45; cursor: default; }
+
+.head { padding: 56px 0 32px; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: end; }
+.eyebrow { color: var(--muted); font-size: 0.875rem; letter-spacing: 0.04em; }
+h1 { font: 700 clamp(1.7rem, 4.4vw, 2.8rem)/1.15 var(--font-display); margin: 12px 0 14px; letter-spacing: -0.01em; }
+.head p { color: var(--muted); max-width: 40em; margin: 0; }
+
+/* Сводка: средняя оценка и распределение по звёздам (строки — фильтр) */
+.overview { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: center; padding: 28px 0; border-bottom: 1px solid var(--border); }
+.avg b { display: block; font: 700 3.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.avg span { color: var(--muted); font-size: 0.9375rem; }
+.dist { display: grid; gap: 6px; max-width: 520px; }
+.dist button { display: grid; grid-template-columns: 4.2em minmax(0, 1fr) 3em; gap: 12px; align-items: center; background: none; border: 0; padding: 4px 6px; margin: 0 -6px; border-radius: 8px; color: var(--muted); font: 400 0.875rem var(--font-body); cursor: pointer; text-align: left; }
+.dist button:hover, .dist button[aria-pressed="true"] { background: var(--surface); color: var(--text); }
+.dist .bar { height: 8px; border-radius: 4px; background: var(--surface-alt); overflow: hidden; }
+.dist .bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.dist .num { font-family: var(--font-mono); font-size: 0.8125rem; text-align: right; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 48px; padding: 28px 0 72px; align-items: start; }
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 6px; }
+.toolbar .shown { color: var(--muted); font-size: 0.875rem; margin-right: auto; }
+.toolbar select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; font: 400 0.875rem var(--font-body); }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 0.8125rem; color: var(--text); cursor: pointer; }
+
+.rv-list { display: grid; }
+.rv-item { padding: 18px 0; border-bottom: 1px solid var(--border); min-width: 0; }
+.rv-item header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rv-item header time { margin-left: auto; }
+.rv-item strong { font-weight: 600; }
+.rv-item time { font: 400 0.75rem var(--font-mono); color: var(--dim); }
+.rv-item p { margin: 8px 0 0; color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; }
+.rv-empty { color: var(--muted); padding: 24px 0; }
+.rv-more { margin-top: 16px; }
+.stars { color: var(--accent); letter-spacing: 2px; font-size: 1rem; }
+.stars i { font-style: normal; color: var(--border); }
+
+aside.side { position: sticky; top: 88px; display: grid; gap: 16px; }
+.rv-form { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); padding: 22px; display: grid; gap: 14px; }
+.rv-form h2 { font: 600 1.1875rem var(--font-body); margin: 0; }
+.rv-form label { display: grid; gap: 6px; font-size: 0.8125rem; color: var(--muted); }
+.rv-form input[type=text], .rv-form textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; font: 400 0.9375rem/1.5 var(--font-body); }
+.rv-form textarea { min-height: 120px; resize: vertical; }
+.rv-form input:focus, .rv-form textarea:focus { outline: none; border-color: var(--muted); }
+.rv-count { font: 400 0.75rem var(--font-mono); color: var(--dim); text-align: right; }
+.rv-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.stars-pick { display: flex; gap: 4px; border: 0; padding: 0; margin: 0; }
+.stars-pick legend { font-size: 0.8125rem; color: var(--muted); margin-bottom: 6px; padding: 0; }
+.stars-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.stars-pick label { cursor: pointer; font-size: 1.6rem; line-height: 1; color: var(--border); transition: color .12s; }
+.stars-pick label.on { color: var(--accent); }
+.stars-pick input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.rv-note { font-size: 0.8125rem; color: var(--dim); margin: 0; }
+.rv-status { font-size: 0.875rem; color: var(--accent); margin: 0; min-height: 1.4em; }
+.rv-github { font-size: 0.875rem; color: var(--dim); }
+.rv-github button { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font: inherit; }
+.giscus-wrap { margin-top: 16px; }
+
+footer { border-top: 1px solid var(--border); padding: 24px 0 40px; color: var(--muted); font-size: 0.875rem; display: flex; flex-wrap: wrap; gap: 10px 24px; }
+
+@media (max-width: 880px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  aside.side { position: static; order: -1; }
+  .head { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .back { display: none; }
+}
+@media (max-width: 520px) {
+  .overview { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .head { padding-top: 36px; }
+  .rv-form { padding: 18px; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><span class="logo" aria-hidden="true"></span>OPEN</a>
+    <a class="back" href="./#reviews"><span data-l="ru">← На главную</span><span data-l="en">← Back to home</span></a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="head">
+    <div>
+      <div class="eyebrow"><span data-l="ru">Отзывы</span><span data-l="en">Reviews</span></div>
+      <h1><span data-l="ru">Что говорят игроки об OPEN</span><span data-l="en">What players say about OPEN</span></h1>
+      <p><span data-l="ru">Все отзывы пользователей. Мы их не редактируем и не придумываем, а только убираем спам и оскорбления.</span><span data-l="en">Every review from OPEN users. We don't edit or make them up; we only remove spam and abuse.</span></p>
+    </div>
+    <a class="btn primary" href="#rv-form"><span data-l="ru">Оставить отзыв</span><span data-l="en">Leave a review</span></a>
+  </div>
+
+  <section class="overview" id="overview" aria-label="Сводка" hidden>
+    <div class="avg" id="rv-avg"></div>
+    <div class="dist" id="rv-dist"></div>
+  </section>
+
+  <div class="layout">
+    <section aria-label="Список отзывов">
+      <div class="toolbar">
+        <span class="shown" id="rv-shown"></span>
+        <button class="chip" type="button" id="rv-filter-chip" hidden></button>
+        <label><span class="rv-hp"><span data-l="ru">Сортировка</span><span data-l="en">Sort</span></span>
+          <select id="rv-sort">
+            <option value="new" data-ru="Сначала новые" data-en="Newest first">Сначала новые</option>
+            <option value="old" data-ru="Сначала старые" data-en="Oldest first">Сначала старые</option>
+            <option value="high" data-ru="Сначала высокие оценки" data-en="Highest rated">Сначала высокие оценки</option>
+            <option value="low" data-ru="Сначала низкие оценки" data-en="Lowest rated">Сначала низкие оценки</option>
+          </select>
+        </label>
+      </div>
+      <div class="rv-list" id="rv-list"><p class="rv-empty"><span data-l="ru">Загружаю отзывы…</span><span data-l="en">Loading reviews…</span></p></div>
+      <button class="btn sm rv-more" id="rv-more" type="button" hidden><span data-l="ru">Показать ещё</span><span data-l="en">Show more</span></button>
+    </section>
+
+    <aside class="side">
+      <form class="rv-form" id="rv-form" novalidate>
+        <h2><span data-l="ru">Оставить отзыв</span><span data-l="en">Leave a review</span></h2>
+        <label for="rv-name"><span><span data-l="ru">Имя или ник</span><span data-l="en">Name or nickname</span></span>
+          <input type="text" id="rv-name" name="name" maxlength="40" autocomplete="nickname" required>
+        </label>
+        <fieldset class="stars-pick" id="rv-stars">
+          <legend><span data-l="ru">Оценка</span><span data-l="en">Rating</span></legend>
+        </fieldset>
+        <label for="rv-text"><span><span data-l="ru">Отзыв: игра, железо и что изменилось</span><span data-l="en">Review: game, hardware and what changed</span></span>
+          <textarea id="rv-text" name="text" maxlength="1000" required></textarea>
+          <span class="rv-count" id="rv-count">0 / 1000</span>
+        </label>
+        <label class="rv-hp" aria-hidden="true">Website <input type="text" id="rv-website" name="website" tabindex="-1" autocomplete="off"></label>
+        <button class="btn primary" type="submit" id="rv-submit"><span data-l="ru">Отправить</span><span data-l="en">Send</span></button>
+        <p class="rv-status" id="rv-status" role="status" aria-live="polite"></p>
+        <p class="rv-note"><span data-l="ru">Регистрация не нужна. Отзыв появится после проверки, обычно в течение дня. Ошибки лучше писать в</span><span data-l="en">No sign-up needed. Your review appears after a quick check, usually within a day. Report bugs in</span> <a href="https://github.com/pirogovv-collab/OPEN/issues" target="_blank" rel="noopener">Issues</a>.</p>
+      </form>
+      <div class="rv-github">
+        <span data-l="ru">Есть аккаунт GitHub? Можно обсудить OPEN и там:</span><span data-l="en">Have a GitHub account? You can discuss OPEN there too:</span>
+        <button type="button" id="rv-giscus-btn"><span data-l="ru">открыть обсуждение</span><span data-l="en">open the discussion</span></button>
+        <div class="giscus-wrap" id="reviews-box"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <span>OPEN · 2026</span>
+    <a href="./"><span data-l="ru">Главная</span><span data-l="en">Home</span></a>
+    <a href="manual.html"><span data-l="ru">Руководство</span><span data-l="en">User guide</span></a>
+    <a href="terms.html"><span data-l="ru">Пользовательское соглашение</span><span data-l="en">Terms of Use</span></a>
+    <a href="https://github.com/pirogovv-collab/OPEN" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const both = (ru, en) => `<span data-l="ru">${ru}</span><span data-l="en">${en}</span>`;
+  let lang = "ru";
+
+  // Та же база, что и на главной: читать можно только одобренные отзывы (правила RLS в Supabase).
+  const SB = { url: "https://ewubscvbpbotqjkxkrig.supabase.co", key: "sb_publishable_6f97163UK832Nck5GT-zKg_WpETo-id" };
+  const sbHeaders = () => {
+    const h = { apikey: SB.key, "Content-Type": "application/json" };
+    if (!SB.key.startsWith("sb_")) h.Authorization = "Bearer " + SB.key;
+    return h;
+  };
+  const PAGE = 10;
+  const RV = { all: [], shown: PAGE, rating: 0, filter: 0, sort: "new", loaded: false, failed: false };
+  const starsHtml = n => `<span class="stars" aria-label="${n} / 5">${"★".repeat(n)}<i>${"★".repeat(5 - n)}</i></span>`;
+  const fmtDate = iso => { try { return new Date(iso).toLocaleDateString(lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } };
+  const ruCount = (n, one, few, many) => n % 10 === 1 && n % 100 !== 11 ? one : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? few : many;
+
+  function view() {
+    let list = RV.filter ? RV.all.filter(r => r.rating === RV.filter) : RV.all.slice();
+    const t = r => Date.parse(r.created_at) || 0;
+    if (RV.sort === "new") list.sort((a, b) => t(b) - t(a));
+    if (RV.sort === "old") list.sort((a, b) => t(a) - t(b));
+    if (RV.sort === "high") list.sort((a, b) => b.rating - a.rating || t(b) - t(a));
+    if (RV.sort === "low") list.sort((a, b) => a.rating - b.rating || t(b) - t(a));
+    return list;
+  }
+
+  function render() {
+    const listEl = document.getElementById("rv-list"), more = document.getElementById("rv-more");
+    const ov = document.getElementById("overview"), shown = document.getElementById("rv-shown"), chip = document.getElementById("rv-filter-chip");
+    if (RV.failed) { listEl.innerHTML = `<p class="rv-empty">${both("Не удалось загрузить отзывы. Обновите страницу чуть позже.", "Couldn't load reviews. Refresh the page a bit later.")}</p>`; return; }
+    if (!RV.loaded) return;
+    const n = RV.all.length;
+    if (!n) {
+      ov.hidden = true; shown.textContent = ""; more.hidden = true;
+      listEl.innerHTML = `<p class="rv-empty">${both("Пока нет ни одного отзыва. Ваш может быть первым.", "No reviews yet. Yours can be the first.")}</p>`;
+      return;
+    }
+    // Сводка
+    ov.hidden = false;
+    const avg = RV.all.reduce((a, r) => a + r.rating, 0) / n;
+    document.getElementById("rv-avg").innerHTML = `<b>${avg.toFixed(1)}</b>${starsHtml(Math.round(avg))}<br><span>${both(`${n} ${ruCount(n, "отзыв", "отзыва", "отзывов")}`, `${n} review${n === 1 ? "" : "s"}`)}</span>`;
+    const counts = [5, 4, 3, 2, 1].map(s => ({ s, c: RV.all.filter(r => r.rating === s).length }));
+    document.getElementById("rv-dist").innerHTML = counts.map(({ s, c }) => `
+      <button type="button" data-star="${s}" aria-pressed="${RV.filter === s}" title="${lang === "ru" ? "Показать только" : "Show only"} ${s} ★">
+        <span>${s} ★</span><span class="bar"><i style="width:${n ? (c / n * 100).toFixed(1) : 0}%"></i></span><span class="num">${c}</span>
+      </button>`).join("");
+    // Список
+    const list = view();
+    const page = list.slice(0, RV.shown);
+    chip.hidden = !RV.filter;
+    chip.innerHTML = RV.filter ? `${RV.filter} ★ <span aria-hidden="true">×</span>` : "";
+    chip.setAttribute("aria-label", lang === "ru" ? "Сбросить фильтр" : "Clear filter");
+    shown.innerHTML = list.length
+      ? both(`Показано ${page.length} из ${list.length}`, `Showing ${page.length} of ${list.length}`)
+      : "";
+    listEl.innerHTML = list.length ? page.map(r => `
+      <article class="rv-item">
+        <header><strong>${esc(r.name)}</strong>${starsHtml(r.rating)}<time datetime="${esc(r.created_at)}">${fmtDate(r.created_at)}</time></header>
+        <p>${esc(r.text)}</p>
+      </article>`).join("")
+      : `<p class="rv-empty">${both("С такой оценкой отзывов пока нет.", "No reviews with this rating yet.")}</p>`;
+    more.hidden = list.length <= RV.shown;
+  }
+
+  async function fetchReviews() {
+    try {
+      const r = await fetch(`${SB.url}/rest/v1/reviews?select=name,rating,text,created_at&approved=eq.true&order=created_at.desc&limit=1000`, { headers: sbHeaders() });
+      if (!r.ok) throw new Error(r.status);
+      RV.all = await r.json();
+      RV.loaded = true;
+    } catch (e) { RV.failed = true; }
+    render();
+  }
+
+  document.getElementById("rv-dist").addEventListener("click", e => {
+    const b = e.target.closest("button[data-star]"); if (!b) return;
+    const s = +b.dataset.star;
+    RV.filter = RV.filter === s ? 0 : s; RV.shown = PAGE; render();
+  });
+  document.getElementById("rv-filter-chip").addEventListener("click", () => { RV.filter = 0; RV.shown = PAGE; render(); });
+  document.getElementById("rv-sort").addEventListener("change", e => { RV.sort = e.target.value; RV.shown = PAGE; render(); });
+  document.getElementById("rv-more").addEventListener("click", () => { RV.shown += PAGE; render(); });
+
+  // Форма: выбор оценки звёздами и отправка (как на главной)
+  const starsBox = document.getElementById("rv-stars");
+  starsBox.insertAdjacentHTML("beforeend", [1, 2, 3, 4, 5].map(i =>
+    `<input type="radio" name="rating" id="rv-star-${i}" value="${i}"><label for="rv-star-${i}" title="${i}" data-v="${i}">★</label>`).join(""));
+  const paintStars = n => starsBox.querySelectorAll("label").forEach(l => l.classList.toggle("on", +l.dataset.v <= n));
+  starsBox.addEventListener("change", e => { RV.rating = +e.target.value; paintStars(RV.rating); });
+  starsBox.addEventListener("mouseover", e => { const l = e.target.closest("label"); if (l) paintStars(+l.dataset.v); });
+  starsBox.addEventListener("mouseleave", () => paintStars(RV.rating));
+  const textEl = document.getElementById("rv-text");
+  textEl.addEventListener("input", () => { document.getElementById("rv-count").textContent = `${textEl.value.length} / 1000`; });
+
+  document.getElementById("rv-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const status = document.getElementById("rv-status"), btn = document.getElementById("rv-submit");
+    const say = (ru, en) => { status.innerHTML = both(ru, en); };
+    const name = document.getElementById("rv-name").value.trim();
+    const text = textEl.value.trim();
+    if (document.getElementById("rv-website").value) return; // ловушка для ботов
+    if (name.length < 2) return say("Введите имя или ник, хотя бы 2 символа.", "Enter a name or nickname, at least 2 characters.");
+    if (!RV.rating) return say("Поставьте оценку от 1 до 5 звёзд.", "Pick a rating from 1 to 5 stars.");
+    if (text.length < 10) return say("Напишите отзыв хотя бы в 10 символов.", "Write at least 10 characters.");
+    let last = 0; try { last = +localStorage.getItem("open-review-sent") || 0; } catch (err) {}
+    if (Date.now() - last < 10 * 60 * 1000) return say("Отзыв уже отправлен. Следующий можно через 10 минут.", "Review already sent. You can send another in 10 minutes.");
+    btn.disabled = true;
+    say("Отправляю…", "Sending…");
+    try {
+      const r = await fetch(`${SB.url}/rest/v1/reviews`, {
+        method: "POST",
+        headers: { ...sbHeaders(), Prefer: "return=minimal" },
+        body: JSON.stringify({ name, rating: RV.rating, text, lang })
+      });
+      if (!r.ok) throw new Error(r.status);
+      try { localStorage.setItem("open-review-sent", String(Date.now())); } catch (err) {}
+      e.target.reset(); RV.rating = 0; paintStars(0);
+      document.getElementById("rv-count").textContent = "0 / 1000";
+      say("Спасибо! Отзыв появится на сайте после проверки.", "Thank you! Your review will appear after a quick check.");
+    } catch (err) {
+      say("Не получилось отправить. Попробуйте ещё раз чуть позже.", "Couldn't send. Please try again a bit later.");
+    } finally { btn.disabled = false; }
+  });
+
+  // Обсуждение на GitHub (Giscus) — загружается только по кнопке
+  const GISCUS = { repo: "pirogovv-collab/OPEN", repoId: "R_kgDOVB_hwg", category: "Отзовы", categoryId: "DIC_kwDOVB_hws4DJT9A" };
+  let giscusLoaded = false;
+  function loadGiscus(l) {
+    if (giscusLoaded) {
+      const frame = document.querySelector("iframe.giscus-frame");
+      if (frame) frame.contentWindow.postMessage({ giscus: { setConfig: { lang: l } } }, "https://giscus.app");
+      return;
+    }
+    giscusLoaded = true;
+    const sc = document.createElement("script");
+    sc.src = "https://giscus.app/client.js"; sc.async = true; sc.crossOrigin = "anonymous";
+    Object.entries({
+      "data-repo": GISCUS.repo, "data-repo-id": GISCUS.repoId,
+      "data-category": GISCUS.category, "data-category-id": GISCUS.categoryId,
+      "data-mapping": "specific", "data-term": "Отзывы об OPEN", "data-strict": "0",
+      "data-reactions-enabled": "1", "data-emit-metadata": "0", "data-input-position": "top",
+      "data-theme": "transparent_dark", "data-lang": l, "data-loading": "lazy"
+    }).forEach(([k, v]) => sc.setAttribute(k, v));
+    document.getElementById("reviews-box").appendChild(sc);
+  }
+  document.getElementById("rv-giscus-btn").addEventListener("click", e => { e.currentTarget.disabled = true; loadGiscus(lang); });
+
+  // Язык: ?lang=, затем выбор на сайте, затем язык браузера
+  function setLang(l, save) {
+    lang = l;
+    document.documentElement.lang = l;
+    document.title = l === "ru" ? "Отзывы об OPEN" : "OPEN reviews";
+    document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === l)));
+    document.querySelectorAll("#rv-sort option").forEach(o => { o.textContent = o.dataset[l]; });
+    if (save) store.set("open-lang", l);
+    if (giscusLoaded) loadGiscus(l);
+    render();
+  }
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang, true)));
+  const q = new URLSearchParams(location.search).get("lang");
+  setLang(q === "en" || q === "ru" ? q : (store.get("open-lang") || ((navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en")), false);
+  fetchReviews();
+})();
+</script>
+</body>
+</html>
