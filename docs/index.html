@@ -430,7 +430,7 @@ footer a { color: var(--muted); }
       <button type="button" data-lang="ru" aria-pressed="true">RU</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
-    <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать</span><span data-l="en">Download</span></a>
+    <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest/download/OPEN-Setup.exe"><span data-l="ru">Скачать</span><span data-l="en">Download</span></a>
   </div>
 </header>
 
@@ -447,7 +447,7 @@ footer a { color: var(--muted); }
         </div>
         <div>
           <div class="hero-actions">
-            <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN <span class="js-ver">0.7.5</span></span><span data-l="en">Download OPEN <span class="js-ver">0.7.5</span></span></a>
+            <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest/download/OPEN-Setup.exe"><span data-l="ru">Скачать OPEN <span class="js-ver">0.7.5</span></span><span data-l="en">Download OPEN <span class="js-ver">0.7.5</span></span></a>
             <a class="btn" href="#demo"><span data-l="ru">Попробовать в браузере</span><span data-l="en">Try it in the browser</span></a>
           </div>
           <div class="hero-meta"><span data-l="ru">x64 · установщик для Windows · нужны права администратора</span><span data-l="en">x64 · Windows installer · requires administrator rights</span></div>
@@ -834,7 +834,7 @@ footer a { color: var(--muted); }
 
       <div class="cta">
         <h2><span data-l="ru">Поставьте OPEN и сравните FPS до и после</span><span data-l="en">Install OPEN and compare FPS before and after</span></h2>
-        <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest" target="_blank" rel="noopener"><span data-l="ru">Скачать OPEN <span class="js-ver">0.7.5</span></span><span data-l="en">Download OPEN <span class="js-ver">0.7.5</span></span></a>
+        <a class="btn primary js-dl" href="https://github.com/pirogovv-collab/OPEN/releases/latest/download/OPEN-Setup.exe"><span data-l="ru">Скачать OPEN <span class="js-ver">0.7.5</span></span><span data-l="en">Download OPEN <span class="js-ver">0.7.5</span></span></a>
       </div>
       <footer>
         <span>OPEN · 2026</span>
@@ -1648,17 +1648,17 @@ footer a { color: var(--muted); }
     if (!rel) {
       try {
         const r = await fetch("https://api.github.com/repos/pirogovv-collab/OPEN/releases/latest", { headers: { Accept: "application/vnd.github+json" } });
-        if (!r.ok) return;
+        if (!r.ok) return null;
         const j = await r.json();
         const exe = (j.assets || []).find(a => /\.exe$/i.test(a.name));
         rel = { tag: String(j.tag_name || "").replace(/^v/i, ""), date: j.published_at, body: j.body || "", url: j.html_url, exe: exe ? exe.browser_download_url : null };
         try { localStorage.setItem(KEY, JSON.stringify({ at: Date.now(), rel })); } catch (e) {}
-      } catch (e) { return; }
+      } catch (e) { return null; }
     }
-    if (!rel || !/^\d+(\.\d+)+$/.test(rel.tag)) return;
+    if (!rel || !/^\d+(\.\d+)+[a-z]?$/i.test(rel.tag)) return null;
 
     document.querySelectorAll(".js-ver").forEach(el => { el.textContent = rel.tag; });
-    if (rel.exe) document.querySelectorAll(".js-dl").forEach(a => { a.href = rel.exe; a.removeAttribute("target"); });
+    if (rel.exe) document.querySelectorAll(".js-dl").forEach(a => { a.href = rel.exe; });
 
     const list = document.getElementById("versions-list");
     if (list && !list.querySelector(`[data-ver="${CSS.escape(rel.tag)}"]`) && rel.body.trim()) {
@@ -1672,6 +1672,22 @@ footer a { color: var(--muted); }
         <p class="rel-link"><a href="${esc(rel.url)}" target="_blank" rel="noopener">${both("Открыть релиз на GitHub", "Open the release on GitHub")}</a></p>`;
       list.prepend(d);
     }
+    return rel;
+  }
+
+  // Кнопки «Скачать» сразу качают установщик, без страницы GitHub.
+  // Пока сайт не узнал последнюю версию, клик ждёт ответа GitHub до 4 секунд; если ответа нет,
+  // качается постоянная ссылка на установщик последнего релиза (файл OPEN-Setup.exe в релизе).
+  const DL_STABLE = "https://github.com/pirogovv-collab/OPEN/releases/latest/download/OPEN-Setup.exe";
+  let latestRel = null;
+  function wireDownloads(relPromise) {
+    relPromise.then(r => { latestRel = r; });
+    document.querySelectorAll(".js-dl").forEach(a => a.addEventListener("click", async e => {
+      if (latestRel && latestRel.exe) return; // ссылка уже ведёт прямо на установщик
+      e.preventDefault();
+      const r = await Promise.race([relPromise, new Promise(res => setTimeout(() => res(null), 4000))]);
+      location.href = (r && r.exe) || DL_STABLE;
+    }));
   }
 
   // ============== Язык ==============
@@ -1689,7 +1705,7 @@ footer a { color: var(--muted); }
   const saved = store.get("open-lang");
   setLang(saved || ((navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en"));
   fetchReviews();
-  loadLatestRelease();
+  wireDownloads(loadLatestRelease());
 })();
 </script>
 </body>
