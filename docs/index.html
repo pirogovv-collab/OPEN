@@ -117,6 +117,12 @@ h1 .faint { color: var(--dim); }
 .lede { color: var(--muted); font-size: var(--step-1); line-height: 1.55; max-width: 34em; margin: 0; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
 .hero-meta { margin-top: 16px; font: 400 var(--step--1)/1.5 var(--font-mono); color: var(--dim); }
+.usage { margin-top: 14px; font-size: var(--step--1); line-height: 1.7; color: var(--muted); }
+.usage b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.usage .sep { color: var(--dim); }
+.usage .nw { white-space: nowrap; }
+.usage-dot { display: inline-block; vertical-align: middle; margin: -2px 10px 0 0; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(232,232,234,.5); animation: usage-pulse 2.4s infinite; flex: none; }
+@keyframes usage-pulse { 0% { box-shadow: 0 0 0 0 rgba(232,232,234,.45); } 70% { box-shadow: 0 0 0 8px rgba(232,232,234,0); } 100% { box-shadow: 0 0 0 0 rgba(232,232,234,0); } }
 
 .numbers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 48px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .numbers div { padding: 18px 18px 20px; border-left: 1px solid var(--border); }
@@ -451,6 +457,7 @@ footer a { color: var(--muted); }
             <a class="btn" href="#demo"><span data-l="ru">Попробовать в браузере</span><span data-l="en">Try it in the browser</span></a>
           </div>
           <div class="hero-meta"><span data-l="ru">x64 · установщик для Windows · нужны права администратора</span><span data-l="en">x64 · Windows installer · requires administrator rights</span></div>
+          <div class="usage" id="usage" hidden><span class="usage-dot" aria-hidden="true"></span><span id="usage-text"></span></div>
         </div>
       </div>
       <div class="numbers">
@@ -1675,6 +1682,49 @@ footer a { color: var(--muted); }
     return rel;
   }
 
+  // ============== Сколько людей пользуется OPEN ==============
+  // Скачивания: сумма скачиваний установщиков всех релизов на GitHub (вместе с автообновлениями).
+  // Установки: число из базы Supabase. OPEN раз в сутки шлёт туда случайный номер установки,
+  // версию и язык; сайт получает только итоговые числа (функция install_stats).
+  async function cachedJson(key, ttlMs, load) {
+    try {
+      const c = JSON.parse(localStorage.getItem(key) || "null");
+      if (c && Date.now() - c.at < ttlMs) return c.v;
+    } catch (e) {}
+    const v = await load();
+    if (v != null) { try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), v })); } catch (e) {} }
+    return v;
+  }
+  async function loadUsage() {
+    const [downloads, inst] = await Promise.all([
+      cachedJson("open-downloads", 60 * 60 * 1000, async () => {
+        try {
+          const r = await fetch("https://api.github.com/repos/pirogovv-collab/OPEN/releases?per_page=100", { headers: { Accept: "application/vnd.github+json" } });
+          if (!r.ok) return null;
+          const list = await r.json();
+          return list.reduce((sum, rel) => sum + (rel.assets || []).filter(a => /\.exe$/i.test(a.name)).reduce((s2, a) => s2 + (a.download_count || 0), 0), 0);
+        } catch (e) { return null; }
+      }),
+      cachedJson("open-installs", 10 * 60 * 1000, async () => {
+        try {
+          const r = await fetch(`${SB.url}/rest/v1/rpc/install_stats`, { method: "POST", headers: sbHeaders(), body: "{}" });
+          if (!r.ok) return null;
+          const j = await r.json();
+          return j && typeof j.total === "number" ? j : null;
+        } catch (e) { return null; }
+      })
+    ]);
+    const nf = n => Number(n).toLocaleString(S.lang === "ru" ? "ru-RU" : "en-US");
+    const parts = [];
+    const nw = html => `<span class="nw">${html}</span>`;
+    if (inst && inst.active30 > 0) parts.push(nw(both(`Пользуются за месяц: <b>${nf(inst.active30)}</b>`, `Active this month: <b>${nf(inst.active30)}</b>`)));
+    if (inst && inst.total > 0) parts.push(nw(both(`Установок: <b>${nf(inst.total)}</b>`, `Installs: <b>${nf(inst.total)}</b>`)));
+    if (downloads > 0) parts.push(nw(both(`Скачиваний: <b>${nf(downloads)}</b>`, `Downloads: <b>${nf(downloads)}</b>`)));
+    if (!parts.length) return;
+    document.getElementById("usage-text").innerHTML = parts.join('<span class="sep"> · </span>');
+    document.getElementById("usage").hidden = false;
+  }
+
   // Кнопки «Скачать» сразу качают установщик, без страницы GitHub.
   // Пока сайт не узнал последнюю версию, клик ждёт ответа GitHub до 4 секунд; если ответа нет,
   // качается постоянная ссылка на установщик последнего релиза (файл OPEN-Setup.exe в релизе).
@@ -1706,6 +1756,7 @@ footer a { color: var(--muted); }
   setLang(saved || ((navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en"));
   fetchReviews();
   wireDownloads(loadLatestRelease());
+  loadUsage();
 })();
 </script>
 </body>
